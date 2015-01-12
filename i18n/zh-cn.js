@@ -6,7 +6,10 @@
  */
 
 (function($) {
-	$.fn.DtGrid.lang = {
+	if(!$.fn.DtGrid.lang){
+		$.fn.DtGrid.lang = {};
+	}
+	$.fn.DtGrid.lang['zh-cn'] = {
 		errors : {
 			ajaxLoadError : '数据加载失败，请检查您的条件配置是否存在错误。'
 		},
@@ -53,7 +56,11 @@
 			alreadyFirstPage : '已经是第一页了',
 			alreadyLastPage : '已经是最后一页了',
 			nowPage : '{nowPage}',
-			nowPageTitle : '第 {nowPage} 页'
+			nowPageTitle : '第 {nowPage} 页',
+			errors : {
+				notANumber : '您输入的内容不是数字',
+				maxPageSize : '每页显示数量不得超过 {pageSizeLimit} 条，已还原为原设置'
+			}
 		},
 		fastQuery : {
 			title : '<i class="fa fa-search"></i>&nbsp;&nbsp;快速查询',

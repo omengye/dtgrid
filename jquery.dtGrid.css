@@ -1,5 +1,6 @@
 .dt-grid-container {
-	font-family: "Lucida Grande", "Lucida Sans Unicode", Helvetica, Arial, Verdana, sans-serif;
+	font-family: "Lucida Grande", "Lucida Sans Unicode", Helvetica, Arial,
+		Verdana, sans-serif;
 	position: relative;
 	overflow: auto;
 }
@@ -8,10 +9,27 @@
 	margin: 5px 0;
 }
 
-.table>thead>tr>th,.table>tbody>tr>th,.table>tfoot>tr>th,.table>thead>tr>td,.table>tbody>tr>td,.table>tfoot>tr>td {
+.table>thead>tr>th,.table>tbody>tr>th,.table>tfoot>tr>th,.table>thead>tr>td,.table>tbody>tr>td,.table>tfoot>tr>td
+	{
 	padding: 8px;
 	line-height: 1;
 	vertical-align: middle;
+	cursor: default;
+}
+
+.table>thead>tr>th,.table>tbody>tr>th,.table>tfoot>tr>th,.table>tbody>tr>td.extra-column
+	{
+	cursor: pointer;
+}
+
+.table>thead>tr>td:hover,.table>tbody>tr>td:hover,.table>tfoot>tr>td:hover,.dt-grid-extra-columns>td>p:hover
+	{
+	background: #dcf8ff;
+}
+
+.table>thead>tr.dt-grid-extra-columns>td:hover,.table>tbody>tr.dt-grid-extra-columns>td:hover,.table>tfoot>tr.dt-grid-extra-columns>td:hover
+	{
+	background: none;
 }
 
 .dt-grid-toolbar-container {
@@ -32,7 +50,9 @@
 .dt-grid-toolbar-container .dt-grid-pager .dt-grid-pager-status {
 	float: right;
 	margin: 0;
-	margin: 12px 20px 0 0;
+	margin: 6px 20px 0 0;
+	height: 28px;
+	line-height: 28px;
 }
 
 .dt-grid-toolbar-container .dt-grid-pager .dt-grid-pager-button {
@@ -66,6 +86,14 @@
 	float: right;
 	padding-top: 6px;
 	margin-right: 12px;
+}
+
+.change-page-size {
+	width: 68px;
+	display: inline;
+	padding: 2px 4px;
+	line-height: 0px;
+	height: auto;
 }
 
 .dt-grid-process-bar-top {

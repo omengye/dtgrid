@@ -1,8 +1,8 @@
 /*!
- * dtGrid v1.1.8
+ * dtGrid v1.1.9
  *
  * includes: jquery, bootstrap, fontawesome, My97 DatePicker
- * Copyright 2014, http://www.dtgrid.com, http://www.dlshouwen.com
+ * Copyright 2015, http://www.dtgrid.com, http://www.dlshouwen.com
  */
 (function($) {
 	$.fn.DtGrid = {
@@ -20,6 +20,10 @@
 			//如果没有定义编号则设置默认GUID编号
 			if(!options.id){
 				options.id = $.fn.DtGrid.tools.guid();
+			}
+			//如果语言错误则默认为英文
+			if(!$.fn.DtGrid.lang[options.lang]){
+				options.lang = 'en';
 			}
 			/**
 			 * 2. 定义对象
@@ -111,22 +115,23 @@
 						dtGridReflectionObj.pager.nowPage = 1;
 						//如果不是ajax加载，则处理所有数据
 						if(!dtGridReflectionObj.option.ajaxLoad){
-							//处理原始数据集
-							dtGridReflectionObj.originalDatas = dtGridReflectionObj.option.datas;
-							dtGridReflectionObj.originalDatas = dtGridReflectionObj.originalDatas?dtGridReflectionObj.originalDatas:new Array();
-							//处理基础数据集
-							dtGridReflectionObj.baseDatas = dtGridReflectionObj.originalDatas.slice(0, dtGridReflectionObj.originalDatas.length);
-							//处理分页属性
-							dtGridReflectionObj.pager.recordCount = dtGridReflectionObj.baseDatas.length;
-							dtGridReflectionObj.pager.pageCount = Math.floor((dtGridReflectionObj.pager.recordCount-1)/dtGridReflectionObj.pager.pageSize)+1;
-							//获取展现数据集
-							dtGridReflectionObj.exhibitDatas = dtGridReflectionObj.baseDatas.slice(dtGridReflectionObj.pager.startRecord, dtGridReflectionObj.pager.startRecord+dtGridReflectionObj.pager.pageSize);
-							//获取排序数据集备份
-							dtGridReflectionObj.sortOriginalDatas = dtGridReflectionObj.exhibitDatas.slice(0, dtGridReflectionObj.exhibitDatas.length);
-							//构建表格、工具条
-							dtGridReflectionObj.constructGrid();
-							dtGridReflectionObj.constructGridPageBar();
-							dtGridReflectionObj.hideProcessBar();
+							dtGridReflectionObj.hideProcessBar(function(){
+								//处理原始数据集
+								dtGridReflectionObj.originalDatas = dtGridReflectionObj.option.datas;
+								dtGridReflectionObj.originalDatas = dtGridReflectionObj.originalDatas?dtGridReflectionObj.originalDatas:new Array();
+								//处理基础数据集
+								dtGridReflectionObj.baseDatas = dtGridReflectionObj.originalDatas.slice(0, dtGridReflectionObj.originalDatas.length);
+								//处理分页属性
+								dtGridReflectionObj.pager.recordCount = dtGridReflectionObj.baseDatas.length;
+								dtGridReflectionObj.pager.pageCount = Math.floor((dtGridReflectionObj.pager.recordCount-1)/dtGridReflectionObj.pager.pageSize)+1;
+								//获取展现数据集
+								dtGridReflectionObj.exhibitDatas = dtGridReflectionObj.baseDatas.slice(dtGridReflectionObj.pager.startRecord, dtGridReflectionObj.pager.startRecord+dtGridReflectionObj.pager.pageSize);
+								//获取排序数据集备份
+								dtGridReflectionObj.sortOriginalDatas = dtGridReflectionObj.exhibitDatas.slice(0, dtGridReflectionObj.exhibitDatas.length);
+								//构建表格、工具条
+								dtGridReflectionObj.constructGrid();
+								dtGridReflectionObj.constructGridPageBar();
+							});
 							return;
 						}else{
 							//如果是一次加载，则加载所有数据到原始数据
@@ -139,29 +144,31 @@
 									contentType: "application/x-www-form-urlencoded; charset=utf-8",
 									beforeSend: function(xhr) {xhr.setRequestHeader("__REQUEST_TYPE", "AJAX_REQUEST");},
 									success:function(datas){
-										//处理原始数据集
-										dtGridReflectionObj.originalDatas = $.parseJSON(datas);
-										dtGridReflectionObj.originalDatas = dtGridReflectionObj.originalDatas?dtGridReflectionObj.originalDatas:new Array();
-										//处理基础数据集
-										dtGridReflectionObj.baseDatas = dtGridReflectionObj.originalDatas.slice(0, dtGridReflectionObj.originalDatas.length);
-										//处理分页属性
-										dtGridReflectionObj.pager.recordCount = dtGridReflectionObj.baseDatas.length;
-										dtGridReflectionObj.pager.pageCount = Math.floor((dtGridReflectionObj.pager.recordCount-1)/dtGridReflectionObj.pager.pageSize)+1;
-										//获取展现数据集
-										dtGridReflectionObj.exhibitDatas = dtGridReflectionObj.baseDatas.slice(dtGridReflectionObj.pager.startRecord, dtGridReflectionObj.pager.startRecord+dtGridReflectionObj.pager.pageSize);
-										//获取排序数据集备份
-										dtGridReflectionObj.sortOriginalDatas = dtGridReflectionObj.exhibitDatas.slice(0, dtGridReflectionObj.exhibitDatas.length);
-										//构建表格、工具条
-										dtGridReflectionObj.constructGrid();
-										dtGridReflectionObj.constructGridPageBar();
-										dtGridReflectionObj.hideProcessBar();
+										dtGridReflectionObj.hideProcessBar(function(){
+											//处理原始数据集
+											dtGridReflectionObj.originalDatas = $.parseJSON(datas);
+											dtGridReflectionObj.originalDatas = dtGridReflectionObj.originalDatas?dtGridReflectionObj.originalDatas:new Array();
+											//处理基础数据集
+											dtGridReflectionObj.baseDatas = dtGridReflectionObj.originalDatas.slice(0, dtGridReflectionObj.originalDatas.length);
+											//处理分页属性
+											dtGridReflectionObj.pager.recordCount = dtGridReflectionObj.baseDatas.length;
+											dtGridReflectionObj.pager.pageCount = Math.floor((dtGridReflectionObj.pager.recordCount-1)/dtGridReflectionObj.pager.pageSize)+1;
+											//获取展现数据集
+											dtGridReflectionObj.exhibitDatas = dtGridReflectionObj.baseDatas.slice(dtGridReflectionObj.pager.startRecord, dtGridReflectionObj.pager.startRecord+dtGridReflectionObj.pager.pageSize);
+											//获取排序数据集备份
+											dtGridReflectionObj.sortOriginalDatas = dtGridReflectionObj.exhibitDatas.slice(0, dtGridReflectionObj.exhibitDatas.length);
+											//构建表格、工具条
+											dtGridReflectionObj.constructGrid();
+											dtGridReflectionObj.constructGridPageBar();
+										});
 									},
 									error:function(XMLHttpRequest, textStatus, errorThrown){
-										$.fn.DtGrid.tools.toast($.fn.DtGrid.lang.errors.ajaxLoadError, 'error', 5000);
-										//构建表格、工具条
-										dtGridReflectionObj.constructGrid();
-										dtGridReflectionObj.constructGridPageBar();
-										dtGridReflectionObj.hideProcessBar();
+										dtGridReflectionObj.hideProcessBar(function(){
+											$.fn.DtGrid.tools.toast($.fn.DtGrid.lang[dtGridReflectionObj.option.lang].errors.ajaxLoadError, 'error', 5000);
+											//构建表格、工具条
+											dtGridReflectionObj.constructGrid();
+											dtGridReflectionObj.constructGridPageBar();
+										});
 									}
 								});
 								return;
@@ -170,17 +177,19 @@
 					}
 					//非初始化运行
 					if(!dtGridReflectionObj.option.ajaxLoad||dtGridReflectionObj.option.loadAll){
-						//处理快速查询及高级查询
-						if(dtGridReflectionObj.fastQueryParameters||dtGridReflectionObj.advanceQueryParameter){
-							//传递所有数据
-							dtGridReflectionObj.baseDatas = dtGridReflectionObj.originalDatas;
-							//处理快速查询
-							if(dtGridReflectionObj.fastQueryParameters){
-								dtGridReflectionObj.baseDatas = dtGridReflectionObj.doFaseQueryDatasFilter(dtGridReflectionObj.baseDatas, dtGridReflectionObj.fastQueryParameters);
-							}
-							//处理高级查询
-							if(dtGridReflectionObj.advanceQueryParameter){
-								dtGridReflectionObj.baseDatas = dtGridReflectionObj.doAdvanceQueryDatasFilter(dtGridReflectionObj.baseDatas, dtGridReflectionObj.advanceQueryParameter);
+						dtGridReflectionObj.hideProcessBar(function(){
+							//处理快速查询及高级查询
+							if(dtGridReflectionObj.fastQueryParameters||dtGridReflectionObj.advanceQueryParameter){
+								//传递所有数据
+								dtGridReflectionObj.baseDatas = dtGridReflectionObj.originalDatas;
+								//处理快速查询
+								if(dtGridReflectionObj.fastQueryParameters){
+									dtGridReflectionObj.baseDatas = dtGridReflectionObj.doFaseQueryDatasFilter(dtGridReflectionObj.baseDatas, dtGridReflectionObj.fastQueryParameters);
+								}
+								//处理高级查询
+								if(dtGridReflectionObj.advanceQueryParameter){
+									dtGridReflectionObj.baseDatas = dtGridReflectionObj.doAdvanceQueryDatasFilter(dtGridReflectionObj.baseDatas, dtGridReflectionObj.advanceQueryParameter);
+								}
 							}
 							//记录数、页数重算
 							dtGridReflectionObj.pager.recordCount = dtGridReflectionObj.baseDatas.length;
@@ -190,20 +199,21 @@
 								dtGridReflectionObj.pager.nowPage = dtGridReflectionObj.pager.pageCount;
 								dtGridReflectionObj.pager.startRecord = dtGridReflectionObj.pager.pageSize*(dtGridReflectionObj.pager.nowPage-1);
 							}
+							//重新计算开始记录
+							dtGridReflectionObj.pager.startRecord = dtGridReflectionObj.pager.pageSize*(dtGridReflectionObj.pager.nowPage-1);
 							//如果没有数据，则重设开始记录、当前页
 							if(dtGridReflectionObj.baseDatas.length==0){
 								dtGridReflectionObj.pager.nowPage = 1;
 								dtGridReflectionObj.pager.startRecord = 0;
 							}
-						}
-						//获取展现数据集
-						dtGridReflectionObj.exhibitDatas = dtGridReflectionObj.baseDatas.slice(dtGridReflectionObj.pager.startRecord, dtGridReflectionObj.pager.startRecord+dtGridReflectionObj.pager.pageSize);
-						//获取排序数据集备份
-						dtGridReflectionObj.sortOriginalDatas = dtGridReflectionObj.exhibitDatas.slice(0, dtGridReflectionObj.exhibitDatas.length);
-						//构建表格、工具条
-						dtGridReflectionObj.constructGrid();
-						dtGridReflectionObj.constructGridPageBar();
-						dtGridReflectionObj.hideProcessBar();
+							//获取展现数据集
+							dtGridReflectionObj.exhibitDatas = dtGridReflectionObj.baseDatas.slice(dtGridReflectionObj.pager.startRecord, dtGridReflectionObj.pager.startRecord+dtGridReflectionObj.pager.pageSize);
+							//获取排序数据集备份
+							dtGridReflectionObj.sortOriginalDatas = dtGridReflectionObj.exhibitDatas.slice(0, dtGridReflectionObj.exhibitDatas.length);
+							//构建表格、工具条
+							dtGridReflectionObj.constructGrid();
+							dtGridReflectionObj.constructGridPageBar();
+						});
 					}else{
 						//将参数传递后台AJAX获取数据
 						var url = dtGridReflectionObj.option.loadURL;
@@ -230,31 +240,33 @@
 								pager = $.parseJSON(pager);
 								//如果出错表示有可能是程序问题或高级查询方案配置有误
 								if(!pager.isSuccess){
-									$.fn.DtGrid.tools.toast($.fn.DtGrid.lang.errors.ajaxLoadError, 'error', 5000);
+									$.fn.DtGrid.tools.toast($.fn.DtGrid.lang[dtGridReflectionObj.option.lang].errors.ajaxLoadError, 'error', 5000);
 									dtGridReflectionObj.hideProcessBar();
 									return;
 								}
-								//处理展示数据和分页相关信息
-								dtGridReflectionObj.exhibitDatas = pager.exhibitDatas;
-								//获取排序数据集备份
-								dtGridReflectionObj.sortOriginalDatas = dtGridReflectionObj.exhibitDatas.slice(0, dtGridReflectionObj.exhibitDatas.length);
-								//处理分页信息
-								dtGridReflectionObj.pager.pageSize = pager.pageSize;
-								dtGridReflectionObj.pager.startRecord = pager.startRecord;
-								dtGridReflectionObj.pager.nowPage = pager.nowPage;
-								dtGridReflectionObj.pager.recordCount = pager.recordCount;
-								dtGridReflectionObj.pager.pageCount = pager.pageCount;
-								//构建表格、工具条
-								dtGridReflectionObj.constructGrid();
-								dtGridReflectionObj.constructGridPageBar();
-								dtGridReflectionObj.hideProcessBar();
+								dtGridReflectionObj.hideProcessBar(function(){
+									//处理展示数据和分页相关信息
+									dtGridReflectionObj.exhibitDatas = pager.exhibitDatas;
+									//获取排序数据集备份
+									dtGridReflectionObj.sortOriginalDatas = dtGridReflectionObj.exhibitDatas.slice(0, dtGridReflectionObj.exhibitDatas.length);
+									//处理分页信息
+									dtGridReflectionObj.pager.pageSize = pager.pageSize;
+									dtGridReflectionObj.pager.startRecord = pager.startRecord;
+									dtGridReflectionObj.pager.nowPage = pager.nowPage;
+									dtGridReflectionObj.pager.recordCount = pager.recordCount;
+									dtGridReflectionObj.pager.pageCount = pager.pageCount;
+									//构建表格、工具条
+									dtGridReflectionObj.constructGrid();
+									dtGridReflectionObj.constructGridPageBar();
+								});
 							},
 							error:function(XMLHttpRequest, textStatus, errorThrown){
-								$.fn.DtGrid.tools.toast($.fn.DtGrid.lang.errors.ajaxLoadError, 'error', 5000);
-								//构建表格、工具条
-								dtGridReflectionObj.constructGrid();
-								dtGridReflectionObj.constructGridPageBar();
-								dtGridReflectionObj.hideProcessBar();
+								dtGridReflectionObj.hideProcessBar(function(){
+									$.fn.DtGrid.tools.toast($.fn.DtGrid.lang[dtGridReflectionObj.option.lang].errors.ajaxLoadError, 'error', 5000);
+									//构建表格、工具条
+									dtGridReflectionObj.constructGrid();
+									dtGridReflectionObj.constructGridPageBar();
+								});
 							}
 						});
 					}
@@ -271,19 +283,19 @@
 					if(dtGridReflectionObj.option.showHeader!=false){
 						var columns = dtGridReflectionObj.option.columns;
 						gridContent += '<thead>';
-						gridContent += '	<tr>';
+						gridContent += '	<tr class="dt-grid-headers">';
 						gridContent += '		<th class="extra-column '+extraColumnClass+'"></th>';
 						if(dtGridReflectionObj.option.check){
 							gridContent += '	<th class="check-column"><input type="checkbox" id="dt_grid_'+dtGridReflectionObj.option.id+'_check" value="check"></th>';
 						}
 						for(var i=0; i<columns.length; i++){
-							gridContent += '	<th columnId="'+columns[i].id+'" class="'+dtGridReflectionObj.getColumnClassForHide(columns[i])+' '+columns[i].headerClass+' can-sort" style="'+columns[i].headerStyle+'">';
+							gridContent += '	<th columnNo="'+i+'" columnId="'+columns[i].id+'" class="dt-grid-header '+dtGridReflectionObj.getColumnClassForHide(columns[i])+' '+columns[i].headerClass+' can-sort" style="'+columns[i].headerStyle+'">';
 							if(dtGridReflectionObj.sortParameter&&dtGridReflectionObj.sortParameter.columnId&&dtGridReflectionObj.sortParameter.columnId==columns[i].id){
 								if(dtGridReflectionObj.sortParameter.sortType=='1'){
-									gridContent += '<span class="dt-grid-sort">'+$.fn.DtGrid.lang.sortColumn.asc+'</span>';
+									gridContent += '<span class="dt-grid-sort">'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang].sortColumn.asc+'</span>';
 								}
 								if(dtGridReflectionObj.sortParameter.sortType=='2'){
-									gridContent += '<span class="dt-grid-sort dt-grid-sort-desc">'+$.fn.DtGrid.lang.sortColumn.desc+'</span>';
+									gridContent += '<span class="dt-grid-sort dt-grid-sort-desc">'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang].sortColumn.desc+'</span>';
 								}
 							}
 							gridContent += '		'+columns[i].title;
@@ -335,17 +347,17 @@
 						}
 						for(var i=0; i<dtGridReflectionObj.exhibitDatas.length; i++){
 							gridContent += '	<tr class="dt-grid-row" dataNo="'+i+'">';
-							gridContent += '		<td class="extra-column extra-column-event '+extraColumnClass+'" lineNo="'+i+'">'+$.fn.DtGrid.lang.extraColumn.open+'</td>';
+							gridContent += '		<td class="extra-column extra-column-event '+extraColumnClass+'" dataNo="'+i+'">'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang].extraColumn.open+'</td>';
 							if(dtGridReflectionObj.option.check){
-								gridContent += '	<td class="check-column text-center"><input type="checkbox" id="dt_grid_'+dtGridReflectionObj.option.id+'_check_'+i+'" value="'+i+'"></td>';
+								gridContent += '	<td class="check-column text-center"><input type="checkbox" dataNo="'+i+'" id="dt_grid_'+dtGridReflectionObj.option.id+'_check_'+i+'" class="dt-grid-check" value="'+i+'"></td>';
 							}
 							var columns = dtGridReflectionObj.option.columns;
 							for(var j=0; j<columns.length; j++){
-								gridContent += '	<td class="'+dtGridReflectionObj.getColumnClassForHide(columns[j])+' '+columns[j].columnClass+'" style="'+columns[j].columnStyle+'">';
+								gridContent += '	<td dataNo="'+i+'" columnNo="'+j+'" class="dt-grid-cell '+dtGridReflectionObj.getColumnClassForHide(columns[j])+' '+columns[j].columnClass+'" style="'+columns[j].columnStyle+'">';
 								var value = dtGridReflectionObj.exhibitDatas[i][columns[j].id];
 								value = value==null?'':value;
 								if(columns[j].resolution){
-									gridContent += columns[j].resolution(dtGridReflectionObj.exhibitDatas[i], value);
+									gridContent += columns[j].resolution(value, dtGridReflectionObj.exhibitDatas[i], columns[j], dtGridReflectionObj, i, j);
 								}else{
 									gridContent += dtGridReflectionObj.formatContent(columns[j], value);
 								}
@@ -353,17 +365,17 @@
 							}
 							gridContent += '	</tr>';
 							gridContent += '	<tr id="dt_grid_'+dtGridReflectionObj.option.id+'_extra_columns_'+i+'" class="dt-grid-extra-columns hidden">';
-							gridContent += '		<td colspan="'+(columns.length+1+(dtGridReflectionObj.option.check?1:0))+'">';
+							gridContent += '		<td dataNo="'+i+'" colspan="'+(columns.length+1+(dtGridReflectionObj.option.check?1:0))+'">';
 							for(var j=0; j<columns.length; j++){
 								if(columns[j].extra==false){
 									continue;
 								}
-								gridContent += '		<p class="'+dtGridReflectionObj.getExtraColumnClassForHide(columns[j])+'">';
+								gridContent += '		<p dataNo="'+i+'" columnNo="'+j+'" class="dt-grid-cell '+dtGridReflectionObj.getExtraColumnClassForHide(columns[j])+'">';
 								gridContent += '			'+columns[j].title+' : ';
 								var value = dtGridReflectionObj.exhibitDatas[i][columns[j].id];
 								value = value==null?'':value;
 								if(columns[j].resolution){
-									gridContent += columns[j].resolution(dtGridReflectionObj.exhibitDatas[i], value);
+									gridContent += columns[j].resolution(value, dtGridReflectionObj.exhibitDatas[i], columns[j], dtGridReflectionObj, i, j);
 								}else{
 									gridContent += dtGridReflectionObj.formatContent(columns[j], value);
 								}
@@ -379,29 +391,202 @@
 					$('#'+dtGridReflectionObj.option.gridContainer).append(gridContent);
 					//备份gridId
 					var gridId = dtGridReflectionObj.option.id;
-					//绑定单击方法
-					if(dtGridReflectionObj.option.onRowClick){
-						$('#dt_grid_'+gridId+' .dt-grid-row').click(function(){
-							var dataNo = $(this).attr('dataNo');
-							dtGridReflectionObj.option.onRowClick(dtGridReflectionObj.exhibitDatas[dataNo]);
+					//绑定单元格单击方法
+					if(dtGridReflectionObj.option.onCellClick){
+						$('#dt_grid_'+gridId+' .dt-grid-cell').click(function(e){
+							dtGridReflectionObj.bindCellEvent(dtGridReflectionObj.option.onCellClick, this, e);
 						});
 					}
-					//绑定双击方法
-					if(dtGridReflectionObj.option.onRowDblClick){
-						$('#dt_grid_'+gridId+' .dt-grid-row').dblclick(function(){
-							var dataNo = $(this).attr('dataNo');
-							dtGridReflectionObj.option.onRowDblClick(dtGridReflectionObj.exhibitDatas[dataNo]);
+					//绑定单元格双击方法
+					if(dtGridReflectionObj.option.onCellDblClick){
+						$('#dt_grid_'+gridId+' .dt-grid-cell').dblclick(function(e){
+							dtGridReflectionObj.bindCellEvent(dtGridReflectionObj.option.onCellDblClick, this, e);
 						});
+					}
+					//绑定单元格鼠标滑过方法
+					if(dtGridReflectionObj.option.onCellMouseOver){
+						$('#dt_grid_'+gridId+' .dt-grid-cell').mouseover(function(e){
+							dtGridReflectionObj.bindCellEvent(dtGridReflectionObj.option.onCellMouseOver, this, e);
+						});
+					}
+					//绑定单元格鼠标移动方法
+					if(dtGridReflectionObj.option.onCellMouseMove){
+						$('#dt_grid_'+gridId+' .dt-grid-cell').mousemove(function(e){
+							dtGridReflectionObj.bindCellEvent(dtGridReflectionObj.option.onCellMouseMove, this, e);
+						});
+					}
+					//绑定单元格鼠标滑出方法
+					if(dtGridReflectionObj.option.onCellMouseOut){
+						$('#dt_grid_'+gridId+' .dt-grid-cell').mouseout(function(e){
+							dtGridReflectionObj.bindCellEvent(dtGridReflectionObj.option.onCellMouseOut, this, e);
+						});
+					}
+					//绑定单元格鼠标按下方法
+					if(dtGridReflectionObj.option.onCellMouseDown){
+						$('#dt_grid_'+gridId+' .dt-grid-cell').mousedown(function(e){
+							dtGridReflectionObj.bindCellEvent(dtGridReflectionObj.option.onCellMouseDown, this, e);
+						});
+					}
+					//绑定单元格鼠标释放方法
+					if(dtGridReflectionObj.option.onCellMouseUp){
+						$('#dt_grid_'+gridId+' .dt-grid-cell').mouseup(function(e){
+							dtGridReflectionObj.bindCellEvent(dtGridReflectionObj.option.onCellMouseUp, this, e);
+						});
+					}
+					//绑定行单击方法
+					if(dtGridReflectionObj.option.onRowClick){
+						$('#dt_grid_'+gridId+' .dt-grid-cell').click(function(e){
+							dtGridReflectionObj.bindRowEvent(dtGridReflectionObj.option.onRowClick, this, e);
+						});
+					}
+					//绑定行双击方法
+					if(dtGridReflectionObj.option.onRowDblClick){
+						$('#dt_grid_'+gridId+' .dt-grid-cell').dblclick(function(e){
+							dtGridReflectionObj.bindRowEvent(dtGridReflectionObj.option.onRowDblClick, this, e);
+						});
+					}
+					//绑定行鼠标滑过方法
+					if(dtGridReflectionObj.option.onRowMouseOver){
+						$('#dt_grid_'+gridId+' .dt-grid-cell').mouseover(function(e){
+							dtGridReflectionObj.bindRowEvent(dtGridReflectionObj.option.onRowMouseOver, this, e);
+						});
+					}
+					//绑定行鼠标移动方法
+					if(dtGridReflectionObj.option.onRowMouseMove){
+						$('#dt_grid_'+gridId+' .dt-grid-cell').mousemove(function(e){
+							dtGridReflectionObj.bindRowEvent(dtGridReflectionObj.option.onRowMouseMove, this, e);
+						});
+					}
+					//绑定行鼠标滑出方法
+					if(dtGridReflectionObj.option.onRowMouseOut){
+						$('#dt_grid_'+gridId+' .dt-grid-cell').mouseout(function(e){
+							dtGridReflectionObj.bindRowEvent(dtGridReflectionObj.option.onRowMouseOut, this, e);
+						});
+					}
+					//绑定行鼠标按下方法
+					if(dtGridReflectionObj.option.onRowMouseDown){
+						$('#dt_grid_'+gridId+' .dt-grid-cell').mousedown(function(e){
+							dtGridReflectionObj.bindRowEvent(dtGridReflectionObj.option.onRowMouseDown, this, e);
+						});
+					}
+					//绑定行鼠标释放方法
+					if(dtGridReflectionObj.option.onRowMouseUp){
+						$('#dt_grid_'+gridId+' .dt-grid-cell').mouseup(function(e){
+							dtGridReflectionObj.bindRowEvent(dtGridReflectionObj.option.onRowMouseUp, this, e);
+						});
+					}
+					//绑定表头单击方法
+					if(dtGridReflectionObj.option.onHeaderClick){
+						$('#dt_grid_'+gridId+' .dt-grid-header').click(function(e){
+							dtGridReflectionObj.bindHeaderEvent(dtGridReflectionObj.option.onHeaderClick, this, e);
+						});
+					}
+					/**
+					 * 修复：表头双加方法由于表头的单击排序需要重新加载，所以双击事件无法响应，取消该事件
+					 */
+					/**
+					//绑定表头双击方法
+					if(dtGridReflectionObj.option.onHeaderDblClick){
+						$('#dt_grid_'+gridId+' .dt-grid-header').dblclick(function(e){
+							dtGridReflectionObj.bindHeaderEvent(dtGridReflectionObj.option.onHeaderDblClick, this, e);
+						});
+					}
+					 */
+					//绑定表头鼠标滑过方法
+					if(dtGridReflectionObj.option.onHeaderMouseOver){
+						$('#dt_grid_'+gridId+' .dt-grid-header').mouseover(function(e){
+							dtGridReflectionObj.bindHeaderEvent(dtGridReflectionObj.option.onHeaderMouseOver, this, e);
+						});
+					}
+					//绑定表头鼠标移动方法
+					if(dtGridReflectionObj.option.onHeaderMouseMove){
+						$('#dt_grid_'+gridId+' .dt-grid-header').mousemove(function(e){
+							dtGridReflectionObj.bindHeaderEvent(dtGridReflectionObj.option.onHeaderMouseMove, this, e);
+						});
+					}
+					//绑定表头鼠标滑出方法
+					if(dtGridReflectionObj.option.onHeaderMouseOut){
+						$('#dt_grid_'+gridId+' .dt-grid-header').mouseout(function(e){
+							dtGridReflectionObj.bindHeaderEvent(dtGridReflectionObj.option.onHeaderMouseOut, this, e);
+						});
+					}
+					//绑定表头鼠标按下方法
+					if(dtGridReflectionObj.option.onHeaderMouseDown){
+						$('#dt_grid_'+gridId+' .dt-grid-header').mousedown(function(e){
+							dtGridReflectionObj.bindHeaderEvent(dtGridReflectionObj.option.onHeaderMouseDown, this, e);
+						});
+					}
+					//绑定表头鼠标释放方法
+					if(dtGridReflectionObj.option.onHeaderMouseUp){
+						$('#dt_grid_'+gridId+' .dt-grid-header').mouseup(function(e){
+							dtGridReflectionObj.bindHeaderEvent(dtGridReflectionObj.option.onHeaderMouseUp, this, e);
+						});
+					}
+					//绑定表格单击方法
+					if(dtGridReflectionObj.option.onGridClick){
+						$('#dt_grid_'+gridId).click(function(e){
+							dtGridReflectionObj.bindGridEvent(dtGridReflectionObj.option.onGridClick, e);
+						});
+					}
+					//绑定表格双击方法
+					if(dtGridReflectionObj.option.onGridDblClick){
+						$('#dt_grid_'+gridId).dblclick(function(e){
+							dtGridReflectionObj.bindGridEvent(dtGridReflectionObj.option.onGridDblClick, e);
+						});
+					}
+					//绑定表格鼠标滑过方法
+					if(dtGridReflectionObj.option.onGridMouseOver){
+						$('#dt_grid_'+gridId).mouseover(function(e){
+							dtGridReflectionObj.bindGridEvent(dtGridReflectionObj.option.onGridMouseOver, e);
+						});
+					}
+					//绑定表格鼠标移动方法
+					if(dtGridReflectionObj.option.onGridMouseMove){
+						$('#dt_grid_'+gridId).mousemove(function(e){
+							dtGridReflectionObj.bindGridEvent(dtGridReflectionObj.option.onGridMouseMove, e);
+						});
+					}
+					//绑定表格鼠标滑出方法
+					if(dtGridReflectionObj.option.onGridMouseOut){
+						$('#dt_grid_'+gridId).mouseout(function(e){
+							dtGridReflectionObj.bindGridEvent(dtGridReflectionObj.option.onGridMouseOut, e);
+						});
+					}
+					//绑定表格鼠标按下方法
+					if(dtGridReflectionObj.option.onGridMouseDown){
+						$('#dt_grid_'+gridId).mousedown(function(e){
+							dtGridReflectionObj.bindGridEvent(dtGridReflectionObj.option.onGridMouseDown, e);
+						});
+					}
+					//绑定表格鼠标释放方法
+					if(dtGridReflectionObj.option.onGridMouseUp){
+						$('#dt_grid_'+gridId).mouseup(function(e){
+							dtGridReflectionObj.bindGridEvent(dtGridReflectionObj.option.onGridMouseUp, e);
+						});
+					}
+					//绑定表格加载完成方法
+					if(dtGridReflectionObj.option.onGridComplete){
+						dtGridReflectionObj.bindGridEvent(dtGridReflectionObj.option.onGridComplete);
 					}
 					//绑定显隐方法
-					$('#dt_grid_'+gridId+' .extra-column-event').click(function(){
-						var lineNo = $(this).attr('lineNo');
-						if($('#dt_grid_'+gridId+'_extra_columns_'+lineNo).hasClass('hidden')){
-							$('#dt_grid_'+gridId+'_extra_columns_'+lineNo).removeClass('hidden');
-							$(this).html($.fn.DtGrid.lang.extraColumn.close);
+					$('#dt_grid_'+gridId+' .extra-column-event').click(function(e){
+						var dataNo = $(this).attr('dataNo');
+						if($('#dt_grid_'+gridId+'_extra_columns_'+dataNo).hasClass('hidden')){
+							$('#dt_grid_'+gridId+'_extra_columns_'+dataNo).removeClass('hidden');
+							$(this).html($.fn.DtGrid.lang[dtGridReflectionObj.option.lang].extraColumn.close);
+							//绑定扩展行展开方法
+							if(dtGridReflectionObj.option.onExtraOpen){
+								var row = $('#dt_grid_'+gridId+' tr[dataNo="'+dataNo+'"]');
+								dtGridReflectionObj.bindExtraEvent(dtGridReflectionObj.option.onExtraOpen, row, e);
+							}
 						}else{
-							$('#dt_grid_'+gridId+'_extra_columns_'+lineNo).addClass('hidden');
-							$(this).html($.fn.DtGrid.lang.extraColumn.open);
+							$('#dt_grid_'+gridId+'_extra_columns_'+dataNo).addClass('hidden');
+							$(this).html($.fn.DtGrid.lang[dtGridReflectionObj.option.lang].extraColumn.open);
+							//绑定扩展行关闭方法
+							if(dtGridReflectionObj.option.onExtraClose){
+								var row = $('#dt_grid_'+gridId+' tr[dataNo="'+dataNo+'"]');
+								dtGridReflectionObj.bindExtraEvent(dtGridReflectionObj.option.onExtraClose, row, e);
+							}
 						}
 					});
 					//绑定排序方法
@@ -429,11 +614,134 @@
 						dtGridReflectionObj.reload();
 					});
 					//绑定复选方法
-					if(dtGridReflectionObj.option.check){
-						$('#dt_grid_'+dtGridReflectionObj.option.id+'_check').click(function(){
-							$('input[id*=dt_grid_'+dtGridReflectionObj.option.id+'_check_]').attr('checked', this.checked);
+					if(dtGridReflectionObj.option.onCheck){
+						$('input[id*=dt_grid_'+gridId+'_check_]').click(function(e){
+							dtGridReflectionObj.bindCheckEvent(dtGridReflectionObj.option.onCheck, this, e);
 						});
 					}
+					//绑定复选方法（全选反选）
+					if(dtGridReflectionObj.option.check){
+						$('#dt_grid_'+gridId+'_check').click(function(e){
+							$('input[id*=dt_grid_'+gridId+'_check_]').attr('checked', this.checked);
+							if(dtGridReflectionObj.option.onCheck){
+								$('input[id*=dt_grid_'+gridId+'_check_]').each(function(){
+									dtGridReflectionObj.bindCheckEvent(dtGridReflectionObj.option.onCheck, this, e);
+								});
+							}
+						});
+					}
+				},
+				//绑定单元格事件
+				bindCellEvent : function(func, cellObject, e){
+					//定义表格对象映像
+					var dtGridReflectionObj = this;
+					//备份gridId
+					var gridId = dtGridReflectionObj.option.id;
+					//获取数据号、列号
+					var dataNo = $(cellObject).attr('dataNo');
+					var columnNo = $(cellObject).attr('columnNo');
+					//获取当前Column对象
+					var column = dtGridReflectionObj.option.columns[columnNo];
+					//获取当前记录
+					var record = dtGridReflectionObj.exhibitDatas[dataNo];
+					//获取当前值（处理后的）
+					var value;
+					if(column.resolution){
+						value = column.resolution(record[column.id], record, column, dtGridReflectionObj, dataNo, columnNo);
+					}else{
+						value = dtGridReflectionObj.formatContent(column, record[column.id]);
+					}
+					//获取当前单元格jQuery对象
+					var cell = $(cellObject);
+					//获取当前行jQuery对象
+					var row = $('#dt_grid_'+gridId+' tr[dataNo="'+dataNo+'"]');
+					//获取扩展行jQuery对象
+					var extraCell = $('#dt_grid_'+gridId+' .dt-grid-extra-columns>td[dataNo="'+dataNo+'"]');
+					func(value, record, column, dtGridReflectionObj, dataNo, columnNo, cell, row, extraCell, e);
+				},
+				//绑定行事件
+				bindRowEvent : function(func, cellObject, e){
+					//定义表格对象映像
+					var dtGridReflectionObj = this;
+					//备份gridId
+					var gridId = dtGridReflectionObj.option.id;
+					//获取数据号、列号
+					var dataNo = $(cellObject).attr('dataNo');
+					var columnNo = $(cellObject).attr('columnNo');
+					//获取当前Column对象
+					var column = dtGridReflectionObj.option.columns[columnNo];
+					//获取当前记录
+					var record = dtGridReflectionObj.exhibitDatas[dataNo];
+					//获取当前值（处理后的）
+					var value;
+					if(column.resolution){
+						value = column.resolution(record[column.id], record, column, dtGridReflectionObj, dataNo, columnNo);
+					}else{
+						value = dtGridReflectionObj.formatContent(column, record[column.id]);
+					}
+					//获取当前单元格jQuery对象
+					var cell = $(cellObject);
+					//获取当前行jQuery对象
+					var row = $('#dt_grid_'+gridId+' tr[dataNo="'+dataNo+'"]');
+					//获取扩展行jQuery对象
+					var extraCell = $('#dt_grid_'+gridId+' .dt-grid-extra-columns>td[dataNo="'+dataNo+'"]');
+					func(value, record, column, dtGridReflectionObj, dataNo, columnNo, cell, row, extraCell, e);
+				},
+				//绑定表头事件
+				bindHeaderEvent : function(func, headerObject, e){
+					//定义表格对象映像
+					var dtGridReflectionObj = this;
+					//备份gridId
+					var gridId = dtGridReflectionObj.option.id;
+					//获取列号
+					var columnNo = $(headerObject).attr('columnNo');
+					//获取当前Column对象
+					var column = dtGridReflectionObj.option.columns[columnNo];
+					//获取当前表头名称
+					var title = column.title;
+					//获取当前单元格jQuery对象
+					var header = $(headerObject);
+					//获取当前行jQuery对象
+					var headerRow = $('#dt_grid_'+gridId+' tr.dt-grid-headers');
+					func(title, column, dtGridReflectionObj, columnNo, header, headerRow, e);
+				},
+				//绑定表头事件
+				bindGridEvent : function(func, e){
+					//定义表格对象映像
+					var dtGridReflectionObj = this;
+					func(dtGridReflectionObj, e);
+				},
+				//绑定扩展行事件
+				bindExtraEvent : function(func, rowObject, e){
+					//定义表格对象映像
+					var dtGridReflectionObj = this;
+					//备份gridId
+					var gridId = dtGridReflectionObj.option.id;
+					//获取数据号
+					var dataNo = $(rowObject).attr('dataNo');
+					//获取当前记录
+					var record = dtGridReflectionObj.exhibitDatas[dataNo];
+					//获取当前行jQuery对象
+					var row = $('#dt_grid_'+gridId+' tr[dataNo="'+dataNo+'"]');
+					//获取扩展行jQuery对象
+					var extraCell = $('#dt_grid_'+gridId+' .dt-grid-extra-columns>td[dataNo="'+dataNo+'"]');
+					func(record, dtGridReflectionObj, dataNo, row, extraCell, e);
+				},
+				//绑定复选事件
+				bindCheckEvent : function(func, checkInput, e){
+					//定义表格对象映像
+					var dtGridReflectionObj = this;
+					//备份gridId
+					var gridId = dtGridReflectionObj.option.id;
+					//获取数据号、列号
+					var dataNo = $(checkInput).attr('dataNo');
+					//获取当前记录
+					var record = dtGridReflectionObj.exhibitDatas[dataNo];
+					//获取当前行jQuery对象
+					var row = $('#dt_grid_'+gridId+' tr[dataNo="'+dataNo+'"]');
+					//获取扩展行jQuery对象
+					var extraCell = $('#dt_grid_'+gridId+' .dt-grid-extra-columns>td[dataNo="'+dataNo+'"]');
+					func(checkInput.checked, record, dtGridReflectionObj, dataNo, row, extraCell, e);
 				},
 				//构建分页内容
 				constructGridPageBar : function(){
@@ -448,15 +756,51 @@
 					var gridStatus = document.createElement('span');
 					if(dtGridReflectionObj.exhibitDatas==null||dtGridReflectionObj.exhibitDatas.length<=0){
 						gridStatus.className = 'dt-grid-pager-status text-primary';
-						gridStatus.innerHTML = $.fn.DtGrid.lang.pageInfo.nothing;
+						gridStatus.innerHTML = $.fn.DtGrid.lang[dtGridReflectionObj.option.lang].pageInfo.nothing;
 					}else{
 						gridStatus.className = 'dt-grid-pager-status text-primary';
-						var info = $.fn.DtGrid.lang.pageInfo.info;
-						info = $.fn.DtGrid.tools.replaceAll(info, '{pageSize}', dtGridReflectionObj.pager.pageSize);
+						var info = $.fn.DtGrid.lang[dtGridReflectionObj.option.lang].pageInfo.info;
 						info = $.fn.DtGrid.tools.replaceAll(info, '{startRecord}', dtGridReflectionObj.pager.startRecord);
 						info = $.fn.DtGrid.tools.replaceAll(info, '{nowPage}', dtGridReflectionObj.pager.nowPage);
 						info = $.fn.DtGrid.tools.replaceAll(info, '{recordCount}', dtGridReflectionObj.pager.recordCount);
 						info = $.fn.DtGrid.tools.replaceAll(info, '{pageCount}', dtGridReflectionObj.pager.pageCount);
+						//设置每页数量的DOM对象
+						var pageSizeElement = '';
+						var pageSize = dtGridReflectionObj.pager.pageSize;
+						//数组类型
+						if(typeof dtGridReflectionObj.option.pageSizeLimit == 'object'){
+							pageSizeElement += '<select id="dt_grid_change_page_size_'+dtGridReflectionObj.option.id+'" name="dt_grid_change_page_size_'+dtGridReflectionObj.option.id+'" class="form-control change-page-size">';
+							//整合可用页码
+							var isHasNowPageSize = false;
+							var pageSizeLimit = new Array();
+							for(var i=0; i<dtGridReflectionObj.option.pageSizeLimit.length; i++){
+								var loopPageSize = dtGridReflectionObj.option.pageSizeLimit[i];
+								pageSizeLimit.push(parseFloat(loopPageSize));
+								if(pageSize==loopPageSize){
+									isHasNowPageSize = true;
+								}
+							}
+							if(!isHasNowPageSize){
+								pageSizeLimit.push(pageSize);
+							}
+							//对当前页码内容排序
+							pageSizeLimit.sort(function(s1, s2){
+								return s1>s2;
+							});
+							//写入代码
+							for(var i=0; i<pageSizeLimit.length; i++){
+								var loopPageSize = pageSizeLimit[i];
+								pageSizeElement += '	<option '+(pageSize==loopPageSize?'selected="selected"':'')+' value="'+loopPageSize+'">'+loopPageSize+'</option>';
+							}
+							pageSizeElement += '</select>';
+							info = $.fn.DtGrid.tools.replaceAll(info, '{pageSize}', pageSizeElement);
+						}else if(typeof dtGridReflectionObj.option.pageSizeLimit == 'number'){
+							//如果是数值类型则为文本框
+							pageSizeElement += '<input id="dt_grid_change_page_size_'+dtGridReflectionObj.option.id+'" name="dt_grid_change_page_size_'+dtGridReflectionObj.option.id+'" type="text" class="form-control change-page-size" value="'+dtGridReflectionObj.pager.pageSize+'" />';
+							info = $.fn.DtGrid.tools.replaceAll(info, '{pageSize}', pageSizeElement);
+						}else{
+							info = $.fn.DtGrid.tools.replaceAll(info, '{pageSize}', pageSize);
+						}
 						gridStatus.innerHTML = info;
 					}
 					var operations = document.createElement('ul');
@@ -464,45 +808,67 @@
 					operations.className = 'pagination pagination-sm dt-grid-pager-button';
 					$('#'+dtGridReflectionObj.option.toolbarContainer+' .dt-grid-pager').append(operations);
 					$('#'+dtGridReflectionObj.option.toolbarContainer+' .dt-grid-pager').append(gridStatus);
+					//绑定修改每页显示条数的事件
+					$('#dt_grid_change_page_size_'+dtGridReflectionObj.option.id).change(function(){
+						var changePageSize = parseFloat(this.value);
+						if(isNaN(changePageSize)){
+							$.fn.DtGrid.tools.toast($.fn.DtGrid.lang[dtGridReflectionObj.option.lang].pageInfo.errors.notANumber, 'warning', 3000);
+							$('#dt_grid_change_page_size_'+dtGridReflectionObj.option.id).val(dtGridReflectionObj.pager.pageSize);
+							return;
+						}
+						if(typeof dtGridReflectionObj.option.pageSizeLimit == 'number'){
+							if(changePageSize>dtGridReflectionObj.option.pageSizeLimit){
+								$.fn.DtGrid.tools.toast($.fn.DtGrid.tools.replaceAll($.fn.DtGrid.lang[dtGridReflectionObj.option.lang].pageInfo.errors.maxPageSize, '{pageSizeLimit}', dtGridReflectionObj.option.pageSizeLimit), 'warning', 3000);
+								$('#dt_grid_change_page_size_'+dtGridReflectionObj.option.id).val(dtGridReflectionObj.pager.pageSize);
+								return;
+							}
+						}
+						dtGridReflectionObj.pager.pageSize = changePageSize;
+						dtGridReflectionObj.reload(true);
+					});
+					//处理分页按钮
 					if(dtGridReflectionObj.exhibitDatas!=null&&dtGridReflectionObj.exhibitDatas.length>0){
 						//第一页按钮
 						var goFirstBtn = document.createElement('li');
-						goFirstBtn.title = $.fn.DtGrid.lang.pageInfo.firstPageTitle;
+						goFirstBtn.id = 'dt_grid_'+dtGridReflectionObj.option.id+'_page_first';
+						goFirstBtn.title = $.fn.DtGrid.lang[dtGridReflectionObj.option.lang].pageInfo.firstPageTitle;
 						if(nowPage<=1){
 							goFirstBtn.className = 'disabled';
-							goFirstBtn.title = $.fn.DtGrid.lang.pageInfo.alreadyFirstPage;
+							goFirstBtn.title = $.fn.DtGrid.lang[dtGridReflectionObj.option.lang].pageInfo.alreadyFirstPage;
 						}
-						goFirstBtn.innerHTML = '<a href="javascript:void(0);">'+$.fn.DtGrid.lang.pageInfo.firstPage+'</a>';
-						$.fn.DtGrid.tools.addEvent(goFirstBtn, 'click', function(){
+						goFirstBtn.innerHTML = '<a href="javascript:void(0);">'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang].pageInfo.firstPage+'</a>';
+						$('#'+dtGridReflectionObj.option.id+'_dtGridOperations').append(goFirstBtn);
+						$('#dt_grid_'+dtGridReflectionObj.option.id+'_page_first').click(function(){
 							dtGridReflectionObj.loadByPage('first');
 						});
-						$('#'+dtGridReflectionObj.option.id+'_dtGridOperations').append(goFirstBtn);
 						//上一页按钮
 						var goPrevBtn = document.createElement('li');
-						goPrevBtn.title = $.fn.DtGrid.lang.pageInfo.prevPageTitle;
+						goPrevBtn.id = 'dt_grid_'+dtGridReflectionObj.option.id+'_page_prev';
+						goPrevBtn.title = $.fn.DtGrid.lang[dtGridReflectionObj.option.lang].pageInfo.prevPageTitle;
 						if(nowPage<=1){
 							goPrevBtn.className = 'disabled';
-							goPrevBtn.title = $.fn.DtGrid.lang.pageInfo.alreadyFirstPage;
+							goPrevBtn.title = $.fn.DtGrid.lang[dtGridReflectionObj.option.lang].pageInfo.alreadyFirstPage;
 						}
-						goPrevBtn.innerHTML = '<a href="javascript:void(0);">'+$.fn.DtGrid.lang.pageInfo.prevPage+'</a>';
-						$.fn.DtGrid.tools.addEvent(goPrevBtn, 'click', function(){
+						goPrevBtn.innerHTML = '<a href="javascript:void(0);">'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang].pageInfo.prevPage+'</a>';
+						$('#'+dtGridReflectionObj.option.id+'_dtGridOperations').append(goPrevBtn);
+						$('#dt_grid_'+dtGridReflectionObj.option.id+'_page_prev').click(function(){
 							dtGridReflectionObj.loadByPage('prev');
 						});
-						$('#'+dtGridReflectionObj.option.id+'_dtGridOperations').append(goPrevBtn);
 						//页面列表
 						if(pageCount<=5){
 							for(var i=1; i<=pageCount; i++){
 								var goPageBtn = document.createElement('li');
-								goPageBtn.page = i;
-								goPageBtn.title = $.fn.DtGrid.tools.replaceAll($.fn.DtGrid.lang.pageInfo.nowPageTitle, '{nowPage}', i);
+								goPageBtn.id = 'dt_grid_'+dtGridReflectionObj.option.id+'_page_'+i;
+								goPageBtn.setAttribute('page', i);
+								goPageBtn.title = $.fn.DtGrid.tools.replaceAll($.fn.DtGrid.lang[dtGridReflectionObj.option.lang].pageInfo.nowPageTitle, '{nowPage}', i);
 								goPageBtn.className = i==nowPage?'active':'';
-								goPageBtn.innerHTML = '<a href="javascript:void(0);">'+$.fn.DtGrid.tools.replaceAll($.fn.DtGrid.lang.pageInfo.nowPage, '{nowPage}', i)+'</a>';
+								goPageBtn.innerHTML = '<a href="javascript:void(0);">'+$.fn.DtGrid.tools.replaceAll($.fn.DtGrid.lang[dtGridReflectionObj.option.lang].pageInfo.nowPage, '{nowPage}', i)+'</a>';
+								$('#'+dtGridReflectionObj.option.id+'_dtGridOperations').append(goPageBtn);
 								if(i!=nowPage){
-									$.fn.DtGrid.tools.addEvent(goPageBtn, 'click', function(){
-										dtGridReflectionObj.goPage(this.page);
+									$('#dt_grid_'+dtGridReflectionObj.option.id+'_page_'+i).click(function(){
+										dtGridReflectionObj.goPage($(this).attr('page'));
 									});
 								}
-								$('#'+dtGridReflectionObj.option.id+'_dtGridOperations').append(goPageBtn);
 							}
 						}else{
 							//获取开始、结束号
@@ -522,16 +888,17 @@
 							}
 							for(var i=start; i<=end; i++){
 								var goPageBtn = document.createElement('li');
-								goPageBtn.page = i;
-								goPageBtn.title = $.fn.DtGrid.tools.replaceAll($.fn.DtGrid.lang.pageInfo.nowPageTitle, '{nowPage}', i);
+								goPageBtn.id = 'dt_grid_'+dtGridReflectionObj.option.id+'_page_'+i;
+								goPageBtn.setAttribute('page', i);
+								goPageBtn.title = $.fn.DtGrid.tools.replaceAll($.fn.DtGrid.lang[dtGridReflectionObj.option.lang].pageInfo.nowPageTitle, '{nowPage}', i);
 								goPageBtn.className = i==nowPage?'active':'';
-								goPageBtn.innerHTML = '<a href="javascript:void(0);">'+$.fn.DtGrid.tools.replaceAll($.fn.DtGrid.lang.pageInfo.nowPage, '{nowPage}', i)+'</a>';
+								goPageBtn.innerHTML = '<a href="javascript:void(0);">'+$.fn.DtGrid.tools.replaceAll($.fn.DtGrid.lang[dtGridReflectionObj.option.lang].pageInfo.nowPage, '{nowPage}', i)+'</a>';
+								$('#'+dtGridReflectionObj.option.id+'_dtGridOperations').append(goPageBtn);
 								if(i!=nowPage){
-									$.fn.DtGrid.tools.addEvent(goPageBtn, 'click', function(){
-										dtGridReflectionObj.goPage(this.page);
+									$('#dt_grid_'+dtGridReflectionObj.option.id+'_page_'+i).click(function(){
+										dtGridReflectionObj.goPage($(this).attr('page'));
 									});
 								}
-								$('#'+dtGridReflectionObj.option.id+'_dtGridOperations').append(goPageBtn);
 							}
 						}
 						var showPageText = document.createElement('li');
@@ -539,43 +906,51 @@
 						showPageText.innerHTML = '<a href="javascript:void(0);">'+dtGridReflectionObj.pager.nowPage+'</a>';
 						//下一页按钮
 						var goNextBtn = document.createElement('li');
-						goNextBtn.title = $.fn.DtGrid.lang.pageInfo.nextPageTitle;
+						goNextBtn.id = 'dt_grid_'+dtGridReflectionObj.option.id+'_page_next';
+						goNextBtn.title = $.fn.DtGrid.lang[dtGridReflectionObj.option.lang].pageInfo.nextPageTitle;
 						if(nowPage>=pageCount){
 							goNextBtn.className = 'disabled';
-							goNextBtn.title = $.fn.DtGrid.lang.pageInfo.alreadyLastPage;
+							goNextBtn.title = $.fn.DtGrid.lang[dtGridReflectionObj.option.lang].pageInfo.alreadyLastPage;
 						}
-						goNextBtn.innerHTML = '<a href="javascript:void(0);">'+$.fn.DtGrid.lang.pageInfo.nextPage+'</a>';
-						$.fn.DtGrid.tools.addEvent(goNextBtn, 'click', function(){
+						goNextBtn.innerHTML = '<a href="javascript:void(0);">'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang].pageInfo.nextPage+'</a>';
+						$('#'+dtGridReflectionObj.option.id+'_dtGridOperations').append(goNextBtn);
+						$('#dt_grid_'+dtGridReflectionObj.option.id+'_page_next').click(function(){
 							dtGridReflectionObj.loadByPage('next');
 						});
-						$('#'+dtGridReflectionObj.option.id+'_dtGridOperations').append(goNextBtn);
 						//最后一页按钮
 						var goLastBtn = document.createElement('li');
-						goLastBtn.title = $.fn.DtGrid.lang.pageInfo.lastPageTitle;
+						goLastBtn.id = 'dt_grid_'+dtGridReflectionObj.option.id+'_page_last';
+						goLastBtn.title = $.fn.DtGrid.lang[dtGridReflectionObj.option.lang].pageInfo.lastPageTitle;
 						if(nowPage>=pageCount){
 							goLastBtn.className = 'disabled';
-							goLastBtn.title = $.fn.DtGrid.lang.pageInfo.alreadyLastPage;
+							goLastBtn.title = $.fn.DtGrid.lang[dtGridReflectionObj.option.lang].pageInfo.alreadyLastPage;
 						}
-						goLastBtn.innerHTML = '<a href="javascript:void(0);">'+$.fn.DtGrid.lang.pageInfo.lastPage+'</a>';
-						$.fn.DtGrid.tools.addEvent(goLastBtn, 'click', function(){
+						goLastBtn.innerHTML = '<a href="javascript:void(0);">'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang].pageInfo.lastPage+'</a>';
+						$('#'+dtGridReflectionObj.option.id+'_dtGridOperations').append(goLastBtn);
+						$('#dt_grid_'+dtGridReflectionObj.option.id+'_page_last').click(function(){
 							dtGridReflectionObj.loadByPage('last');
 						});
-						$('#'+dtGridReflectionObj.option.id+'_dtGridOperations').append(goLastBtn);
 					}
 					//清除浮动
 					$('#'+dtGridReflectionObj.option.toolbarContainer+' .dt-grid-pager').append('<div class="clearfix"></div>');
 					$('#'+dtGridReflectionObj.option.toolbarContainer).append('<div class="clearfix"></div>');
 				},
 				//工具条基础内容
-				toolbar : {
-					refresh : '<li title="'+$.fn.DtGrid.lang.toolbar.refreshTitle+'"><a href="javascript:void(0);" id="refreshGrid_replaceId">'+$.fn.DtGrid.lang.toolbar.refresh+'</a></li>',
-					faseQuery : '<li title="'+$.fn.DtGrid.lang.toolbar.faseQueryTitle+'"><a href="javascript:void(0);" id="faseQuery_replaceId">'+$.fn.DtGrid.lang.toolbar.faseQuery+'</a></li>',
-					advanceQuery : '<li title="'+$.fn.DtGrid.lang.toolbar.advanceQueryTitle+'"><a href="javascript:void(0);" id="advanceQuery_replaceId">'+$.fn.DtGrid.lang.toolbar.advanceQuery+'</a></li>',
-					exportExcel : '<li title="'+$.fn.DtGrid.lang.toolbar.exportExcelTitle+'"><a href="javascript:void(0);" id="exportExcelGrid_replaceId">'+$.fn.DtGrid.lang.toolbar.exportExcel+'</a></li>',
-					exportCsv : '<li title="'+$.fn.DtGrid.lang.toolbar.exportCsvTitle+'"><a href="javascript:void(0);" id="exportCsvGrid_replaceId">'+$.fn.DtGrid.lang.toolbar.exportCsv+'</a></li>',
-					exportPdf : '<li title="'+$.fn.DtGrid.lang.toolbar.exportPdfTitle+'"><a href="javascript:void(0);" id="exportPdfGrid_replaceId">'+$.fn.DtGrid.lang.toolbar.exportPdf+'</a></li>',
-					exportTxt : '<li title="'+$.fn.DtGrid.lang.toolbar.exportTxtTitle+'"><a href="javascript:void(0);" id="exportTxtGrid_replaceId">'+$.fn.DtGrid.lang.toolbar.exportTxt+'</a></li>',
-					print : '<li title="'+$.fn.DtGrid.lang.toolbar.printTitle+'"><a href="javascript:void(0);" id="printGrid_replaceId">'+$.fn.DtGrid.lang.toolbar.print+'</a></li>',
+				toolbar : function(type){
+					//映射表格对象
+					var dtGridReflectionObj = this;
+					//定义工具条内容
+					var toolbars = {
+						refresh : '<li title="'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang].toolbar.refreshTitle+'"><a href="javascript:void(0);" id="refreshGrid_replaceId">'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang].toolbar.refresh+'</a></li>',
+						faseQuery : '<li title="'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang].toolbar.faseQueryTitle+'"><a href="javascript:void(0);" id="faseQuery_replaceId">'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang].toolbar.faseQuery+'</a></li>',
+						advanceQuery : '<li title="'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang].toolbar.advanceQueryTitle+'"><a href="javascript:void(0);" id="advanceQuery_replaceId">'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang].toolbar.advanceQuery+'</a></li>',
+						exportExcel : '<li title="'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang].toolbar.exportExcelTitle+'"><a href="javascript:void(0);" id="exportExcelGrid_replaceId">'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang].toolbar.exportExcel+'</a></li>',
+						exportCsv : '<li title="'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang].toolbar.exportCsvTitle+'"><a href="javascript:void(0);" id="exportCsvGrid_replaceId">'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang].toolbar.exportCsv+'</a></li>',
+						exportPdf : '<li title="'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang].toolbar.exportPdfTitle+'"><a href="javascript:void(0);" id="exportPdfGrid_replaceId">'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang].toolbar.exportPdf+'</a></li>',
+						exportTxt : '<li title="'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang].toolbar.exportTxtTitle+'"><a href="javascript:void(0);" id="exportTxtGrid_replaceId">'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang].toolbar.exportTxt+'</a></li>',
+						print : '<li title="'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang].toolbar.printTitle+'"><a href="javascript:void(0);" id="printGrid_replaceId">'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang].toolbar.print+'</a></li>'
+					};
+					return toolbars[type];
 				},
 				//构建工具条
 				constructGridToolBar : function(){
@@ -593,7 +968,7 @@
 						var tool = tools.split('|')[i];
 						//处理刷新
 						if(tool=='refresh'){
-							var content = $.fn.DtGrid.tools.replaceAll(dtGridReflectionObj.toolbar.refresh, 'replaceId', dtGridReflectionObj.option.id);
+							var content = $.fn.DtGrid.tools.replaceAll(dtGridReflectionObj.toolbar('refresh'), 'replaceId', dtGridReflectionObj.option.id);
 							$('#'+dtGridReflectionObj.option.toolbarContainer+' .dt-grid-tools').append(content);
 							//绑定方法
 							$('#refreshGrid_'+dtGridReflectionObj.option.id).click(function(){
@@ -602,7 +977,7 @@
 						}
 						//处理快速查询
 						if(tool=='faseQuery'){
-							var content = $.fn.DtGrid.tools.replaceAll(dtGridReflectionObj.toolbar.faseQuery, 'replaceId', dtGridReflectionObj.option.id);
+							var content = $.fn.DtGrid.tools.replaceAll(dtGridReflectionObj.toolbar('faseQuery'), 'replaceId', dtGridReflectionObj.option.id);
 							$('#'+dtGridReflectionObj.option.toolbarContainer+' .dt-grid-tools').append(content);
 							//绑定方法
 							$('#faseQuery_'+dtGridReflectionObj.option.id).click(function(){
@@ -611,7 +986,7 @@
 						}
 						//处理高级查询
 						if(tool=='advanceQuery'){
-							var content = $.fn.DtGrid.tools.replaceAll(dtGridReflectionObj.toolbar.advanceQuery, 'replaceId', dtGridReflectionObj.option.id);
+							var content = $.fn.DtGrid.tools.replaceAll(dtGridReflectionObj.toolbar('advanceQuery'), 'replaceId', dtGridReflectionObj.option.id);
 							$('#'+dtGridReflectionObj.option.toolbarContainer+' .dt-grid-tools').append(content);
 							//绑定方法
 							$('#advanceQuery_'+dtGridReflectionObj.option.id).click(function(){
@@ -627,16 +1002,16 @@
 							for(var j=0; j<tool.split(',').length; j++){
 								var exportTool = tool.split(',')[j];
 								if(exportTool=='excel'){
-									content += $.fn.DtGrid.tools.replaceAll(dtGridReflectionObj.toolbar.exportExcel, 'replaceId', dtGridReflectionObj.option.id);
+									content += $.fn.DtGrid.tools.replaceAll(dtGridReflectionObj.toolbar('exportExcel'), 'replaceId', dtGridReflectionObj.option.id);
 								}
 								if(exportTool=='csv'){
-									content += $.fn.DtGrid.tools.replaceAll(dtGridReflectionObj.toolbar.exportCsv, 'replaceId', dtGridReflectionObj.option.id);
+									content += $.fn.DtGrid.tools.replaceAll(dtGridReflectionObj.toolbar('exportCsv'), 'replaceId', dtGridReflectionObj.option.id);
 								}
 								if(exportTool=='pdf'){
-									content += $.fn.DtGrid.tools.replaceAll(dtGridReflectionObj.toolbar.exportPdf, 'replaceId', dtGridReflectionObj.option.id);
+									content += $.fn.DtGrid.tools.replaceAll(dtGridReflectionObj.toolbar('exportPdf'), 'replaceId', dtGridReflectionObj.option.id);
 								}
 								if(exportTool=='txt'){
-									content += $.fn.DtGrid.tools.replaceAll(dtGridReflectionObj.toolbar.exportTxt, 'replaceId', dtGridReflectionObj.option.id);
+									content += $.fn.DtGrid.tools.replaceAll(dtGridReflectionObj.toolbar('exportTxt'), 'replaceId', dtGridReflectionObj.option.id);
 								}
 							}
 							$('#'+dtGridReflectionObj.option.toolbarContainer+' .dt-grid-tools').append(content);
@@ -667,7 +1042,7 @@
 						}
 						//处理打印
 						if(tool=='print'){
-							var content = $.fn.DtGrid.tools.replaceAll(dtGridReflectionObj.toolbar.print, 'replaceId', dtGridReflectionObj.option.id);
+							var content = $.fn.DtGrid.tools.replaceAll(dtGridReflectionObj.toolbar('print'), 'replaceId', dtGridReflectionObj.option.id);
 							$('#'+dtGridReflectionObj.option.toolbarContainer+' .dt-grid-tools').append(content);
 							//绑定方法
 							$('#printGrid_'+dtGridReflectionObj.option.id).click(function(){
@@ -702,12 +1077,13 @@
 						$('#dt_grid_process_bar_bottom_'+dtGridReflectionObj.option.id).animate({width:dtGridReflectionObj.processWidth+'%'}, 200);
 					}, 200);
 				},
-				hideProcessBar : function(){
+				hideProcessBar : function(callback){
 					var dtGridReflectionObj = this;
 					clearInterval(dtGridReflectionObj.processBarThread);
 					var dtGridReflectionObj = this;
 					$('#dt_grid_process_bar_top_'+dtGridReflectionObj.option.id).animate({width:'100%'}, 100, function(){
 						$('#dt_grid_process_bar_top_'+dtGridReflectionObj.option.id).remove();
+						callback();
 					});
 					$('#dt_grid_process_bar_bottom_'+dtGridReflectionObj.option.id).animate({width:'100%'}, 100, function(){
 						$('#dt_grid_process_bar_bottom_'+dtGridReflectionObj.option.id).remove();
@@ -896,7 +1272,7 @@
 						return;
 					}
 					var content = '';
-					content += $.fn.DtGrid.tools.getWindowStart('faseQuery_'+dtGridReflectionObj.option.id, $.fn.DtGrid.lang.fastQuery.title);
+					content += $.fn.DtGrid.tools.getWindowStart('faseQuery_'+dtGridReflectionObj.option.id, $.fn.DtGrid.lang[dtGridReflectionObj.option.lang].fastQuery.title);
 					content += '<form id="faseQueryForm_'+dtGridReflectionObj.option.id+'">';
 					content += '	<div class="modal-body form-horizontal">';
 					for(var j=0; j<dtGridReflectionObj.option.columns.length; j++){
@@ -908,27 +1284,27 @@
 								content += '<div class="col-sm-4">';
 								if(column.type=='date'){
 									content += '<div class="input-group">';
-									content += '	<input type="text" class="form-control" id="ge_'+column.id+'" name="ge_'+column.id+'" format="'+column.format+'" placeholder="'+$.fn.DtGrid.lang.fastQuery.selectStart+column.title+'" onclick="WdatePicker({dateFmt:\''+$.fn.DtGrid.tools.replaceAll(column.format, 'h', 'H')+'\'});" />';
+									content += '	<input type="text" class="form-control" id="ge_'+column.id+'" name="ge_'+column.id+'" format="'+column.format+'" placeholder="'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang].fastQuery.selectStart+column.title+'" onclick="WdatePicker({dateFmt:\''+$.fn.DtGrid.tools.replaceAll(column.format, 'h', 'H')+'\'});" />';
 									content += '	<div class="input-group-addon"><i class="fa fa-calendar"></i></div>';
 									content += '</div>';
 								}else{
-									content += '<input type="text" class="form-control" id="ge_'+column.id+'" name="ge_'+column.id+'" placeholder="'+$.fn.DtGrid.lang.fastQuery.inputStart+column.title+'" />';
+									content += '<input type="text" class="form-control" id="ge_'+column.id+'" name="ge_'+column.id+'" placeholder="'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang].fastQuery.inputStart+column.title+'" />';
 								}
 								content += '</div>';
 								content += '<div class="col-sm-4">';
 								if(column.type=='date'){
 									content += '<div class="input-group">';
-									content += '	<input type="text" class="form-control" id="le_'+column.id+'" name="le_'+column.id+'" format="'+column.format+'" placeholder="'+$.fn.DtGrid.lang.fastQuery.selectEnd+column.title+'" onclick="WdatePicker({dateFmt:\''+$.fn.DtGrid.tools.replaceAll(column.format, 'h', 'H')+'\'});" />';
+									content += '	<input type="text" class="form-control" id="le_'+column.id+'" name="le_'+column.id+'" format="'+column.format+'" placeholder="'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang].fastQuery.selectEnd+column.title+'" onclick="WdatePicker({dateFmt:\''+$.fn.DtGrid.tools.replaceAll(column.format, 'h', 'H')+'\'});" />';
 									content += '	<div class="input-group-addon"><i class="fa fa-calendar"></i></div>';
 									content += '</div>';
 								}else{
-									content += '<input type="text" class="form-control" id="le_'+column.id+'" name="le_'+column.id+'" placeholder="'+$.fn.DtGrid.lang.fastQuery.inputEnd+column.title+'" />';
+									content += '<input type="text" class="form-control" id="le_'+column.id+'" name="le_'+column.id+'" placeholder="'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang].fastQuery.inputEnd+column.title+'" />';
 								}
 								content += '</div>';
 							}else if(column.codeTable){
 								content += '<div class="col-sm-4">';
 								content += '	<select class="form-control" id="'+column.fastQueryType+'_'+column.id+'" name="'+column.fastQueryType+'_'+column.id+'">';
-								content += '		<option value="">'+$.fn.DtGrid.lang.fastQuery.codeTableSelectAll+'</option>';
+								content += '		<option value="">'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang].fastQuery.codeTableSelectAll+'</option>';
 								for(var key in column.codeTable){
 									content += '	<option value="'+key+'">'+column.codeTable[key]+'</option>';
 								}
@@ -938,15 +1314,15 @@
 								content += '<div class="col-sm-4">';
 								if(column.type=='date'){
 									content += '<div class="input-group">';
-									var hoderName = $.fn.DtGrid.lang.fastQuery.selectStart;
+									var hoderName = $.fn.DtGrid.lang[dtGridReflectionObj.option.lang].fastQuery.selectStart;
 									if(column.fastQueryType=='lt'||column.fastQueryType=='le'){
-										hoderName = $.fn.DtGrid.lang.fastQuery.selectEnd;
+										hoderName = $.fn.DtGrid.lang[dtGridReflectionObj.option.lang].fastQuery.selectEnd;
 									}
 									content += '	<input type="text" class="form-control" id="'+column.fastQueryType+'_'+column.id+'" name="'+column.fastQueryType+'_'+column.id+'" format="'+column.format+'" placeholder="'+hoderName+column.title+'" onclick="WdatePicker({dateFmt:\''+$.fn.DtGrid.tools.replaceAll(column.format, 'h', 'H')+'\'});" />';
 									content += '	<div class="input-group-addon"><i class="fa fa-calendar"></i></div>';
 									content += '</div>';
 								}else{
-									content += '<input type="text" class="form-control" id="'+column.fastQueryType+'_'+column.id+'" name="'+column.fastQueryType+'_'+column.id+'" placeholder="'+$.fn.DtGrid.lang.fastQuery.input+column.title+'" />';
+									content += '<input type="text" class="form-control" id="'+column.fastQueryType+'_'+column.id+'" name="'+column.fastQueryType+'_'+column.id+'" placeholder="'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang].fastQuery.input+column.title+'" />';
 								}
 								content += '</div>';
 							}
@@ -956,9 +1332,9 @@
 					content += '	</div>';
 					content += '</form>';
 					var buttons = '';
-					buttons += '<button type="button" class="btn btn-warning" id="resetFaseQuery_'+dtGridReflectionObj.option.id+'">'+$.fn.DtGrid.lang.fastQuery.buttons.reset+'</button>';
-					buttons += '<button type="button" class="btn btn-primary" id="doFaseQuery_'+dtGridReflectionObj.option.id+'">'+$.fn.DtGrid.lang.fastQuery.buttons.query+'</button>';
-					content += $.fn.DtGrid.tools.getWindowEnd(buttons);
+					buttons += '<button type="button" class="btn btn-warning" id="resetFaseQuery_'+dtGridReflectionObj.option.id+'">'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang].fastQuery.buttons.reset+'</button>';
+					buttons += '<button type="button" class="btn btn-primary" id="doFaseQuery_'+dtGridReflectionObj.option.id+'">'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang].fastQuery.buttons.query+'</button>';
+					content += $.fn.DtGrid.tools.getWindowEnd($.fn.DtGrid.lang[dtGridReflectionObj.option.lang].buttons.close, buttons);
 					$('body').append(content);
 					//绑定方法
 					$('#resetFaseQuery_'+dtGridReflectionObj.option.id).click(function(){
@@ -990,12 +1366,12 @@
 								|| $.fn.DtGrid.tools.equalsIgnoreCase(element.type, 'password')){
 							if (element.name != ""){
 								dtGridReflectionObj.fastQueryParameters[element.name] = element.value;
-								dtGridReflectionObj.fastQueryParameters[element.name+'_format'] = element.format;
+								dtGridReflectionObj.fastQueryParameters[element.name+'_format'] = element.getAttribute('format');
 							}
 						}else if (($.fn.DtGrid.tools.equalsIgnoreCase(element.type, 'checkbox') || $.fn.DtGrid.tools.equalsIgnoreCase(element.type, 'radio')) && element.checked){
 							if (element.name != ""){
 								dtGridReflectionObj.fastQueryParameters[element.name] = element.value;
-								dtGridReflectionObj.fastQueryParameters[element.name+'_format'] = element.format;
+								dtGridReflectionObj.fastQueryParameters[element.name+'_format'] = element.getAttribute('format');
 							}
 						}
 					}
@@ -1171,12 +1547,12 @@
 					}
 					//加载查询内容
 					var content = '';
-					content += $.fn.DtGrid.tools.getWindowStart('advanceQuery_'+dtGridReflectionObj.option.id, $.fn.DtGrid.lang.advanceQuery.title);
+					content += $.fn.DtGrid.tools.getWindowStart('advanceQuery_'+dtGridReflectionObj.option.id, $.fn.DtGrid.lang[dtGridReflectionObj.option.lang].advanceQuery.title);
 					content += '<div class="modal-body advance-query">';
 					content += '	<ul class="nav nav-tabs" role="tablist">';
-//					content += '		<li><a href="#advance_query_plan_'+dtGridReflectionObj.option.id+'" role="tab" data-toggle="tab">'+$.fn.DtGrid.lang.advanceQuery.plan.title+'</a></li>';
-					content += '		<li class="active"><a href="#advance_query_condition_'+dtGridReflectionObj.option.id+'" role="tab" data-toggle="tab">'+$.fn.DtGrid.lang.advanceQuery.condition.title+'</a></li>';
-					content += '		<li><a href="#advance_query_sort_'+dtGridReflectionObj.option.id+'" role="tab" data-toggle="tab">'+$.fn.DtGrid.lang.advanceQuery.sort.title+'</a></li>';
+//					content += '		<li><a href="#advance_query_plan_'+dtGridReflectionObj.option.id+'" role="tab" data-toggle="tab">'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang].advanceQuery.plan.title+'</a></li>';
+					content += '		<li class="active"><a href="#advance_query_condition_'+dtGridReflectionObj.option.id+'" role="tab" data-toggle="tab">'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang].advanceQuery.condition.title+'</a></li>';
+					content += '		<li><a href="#advance_query_sort_'+dtGridReflectionObj.option.id+'" role="tab" data-toggle="tab">'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang].advanceQuery.sort.title+'</a></li>';
 					content += '	</ul>';
 					content += '	<div class="tab-content">';
 //					content += '		<div class="tab-pane" id="advance_query_plan_'+dtGridReflectionObj.option.id+'">';
@@ -1184,30 +1560,30 @@
 //					content += '				<input type="hidden" id="advanceQueryId_'+dtGridReflectionObj.option.id+'" name="advanceQueryId_'+dtGridReflectionObj.option.id+'" />';
 //					content += '				<div class="form-horizontal" style="padding-top:15px;">';
 //					content += '					<div class="form-group">';
-//					content += '						<label class="col-sm-3 control-label text-right">'+$.fn.DtGrid.lang.advanceQuery.plan.advanceQueryName+'</label>';
+//					content += '						<label class="col-sm-3 control-label text-right">'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang].advanceQuery.plan.advanceQueryName+'</label>';
 //					content += '						<div class="col-sm-6">';
-//					content += '							<input type="text" class="form-control" id="advanceQueryName_'+dtGridReflectionObj.option.id+'" name="advanceQueryName_'+dtGridReflectionObj.option.id+'" placeholder="'+$.fn.DtGrid.lang.advanceQuery.plan.advanceQueryNamePlaceHoder+'">';
+//					content += '							<input type="text" class="form-control" id="advanceQueryName_'+dtGridReflectionObj.option.id+'" name="advanceQueryName_'+dtGridReflectionObj.option.id+'" placeholder="'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang].advanceQuery.plan.advanceQueryNamePlaceHoder+'">';
 //					content += '						</div>';
 //					content += '					</div>';
 //					content += '					<div class="form-group">';
-//					content += '						<label class="col-sm-3 control-label text-right">'+$.fn.DtGrid.lang.advanceQuery.plan.remark+'</label>';
+//					content += '						<label class="col-sm-3 control-label text-right">'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang].advanceQuery.plan.remark+'</label>';
 //					content += '						<div class="col-sm-6">';
-//					content += '							<textarea id="remark_'+dtGridReflectionObj.option.id+'" name="remark_'+dtGridReflectionObj.option.id+'" class="form-control" placeholder="'+$.fn.DtGrid.lang.advanceQuery.plan.remarkPlaceHoder+'"></textarea>';
+//					content += '							<textarea id="remark_'+dtGridReflectionObj.option.id+'" name="remark_'+dtGridReflectionObj.option.id+'" class="form-control" placeholder="'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang].advanceQuery.plan.remarkPlaceHoder+'"></textarea>';
 //					content += '						</div>';
 //					content += '					</div>';
 //					content += '					<div class="form-group">';
 //					content += '						<div class="col-sm-offset-3 col-sm-12">';
-//					content += '							<button id="addAdvanceQuery_'+dtGridReflectionObj.option.id+'" title="'+$.fn.DtGrid.lang.advanceQuery.plan.buttons.addAdvanceQueryTitle+'" class="btn btn-xs btn-primary">';
-//					content += '								'+$.fn.DtGrid.lang.advanceQuery.plan.buttons.addAdvanceQuery;
+//					content += '							<button id="addAdvanceQuery_'+dtGridReflectionObj.option.id+'" title="'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang].advanceQuery.plan.buttons.addAdvanceQueryTitle+'" class="btn btn-xs btn-primary">';
+//					content += '								'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang].advanceQuery.plan.buttons.addAdvanceQuery;
 //					content += '							</button>';
-//					content += '							<button id="editAdvanceQuery_'+dtGridReflectionObj.option.id+'" title="'+$.fn.DtGrid.lang.advanceQuery.plan.buttons.editAdvanceQueryTitle+'" class="btn btn-xs btn-primary">';
-//					content += '								'+$.fn.DtGrid.lang.advanceQuery.plan.buttons.editAdvanceQuery;
+//					content += '							<button id="editAdvanceQuery_'+dtGridReflectionObj.option.id+'" title="'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang].advanceQuery.plan.buttons.editAdvanceQueryTitle+'" class="btn btn-xs btn-primary">';
+//					content += '								'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang].advanceQuery.plan.buttons.editAdvanceQuery;
 //					content += '							</button>';
-//					content += '							<button id="copyAdvanceQuery_'+dtGridReflectionObj.option.id+'" title="'+$.fn.DtGrid.lang.advanceQuery.plan.buttons.copyAdvanceQueryTitle+'" class="btn btn-xs btn-warning">';
-//					content += '								'+$.fn.DtGrid.lang.advanceQuery.plan.buttons.copyAdvanceQuery;
+//					content += '							<button id="copyAdvanceQuery_'+dtGridReflectionObj.option.id+'" title="'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang].advanceQuery.plan.buttons.copyAdvanceQueryTitle+'" class="btn btn-xs btn-warning">';
+//					content += '								'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang].advanceQuery.plan.buttons.copyAdvanceQuery;
 //					content += '							</button>';
-//					content += '							<button id="deleteAdvanceQuery_'+dtGridReflectionObj.option.id+'" title="'+$.fn.DtGrid.lang.advanceQuery.plan.buttons.deleteAdvanceQueryTitle+'" class="btn btn-xs btn-danger">';
-//					content += '								'+$.fn.DtGrid.lang.advanceQuery.plan.buttons.deleteAdvanceQuery;
+//					content += '							<button id="deleteAdvanceQuery_'+dtGridReflectionObj.option.id+'" title="'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang].advanceQuery.plan.buttons.deleteAdvanceQueryTitle+'" class="btn btn-xs btn-danger">';
+//					content += '								'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang].advanceQuery.plan.buttons.deleteAdvanceQuery;
 //					content += '							</button>';
 //					content += '						</div>';
 //					content += '					</div>';
@@ -1217,24 +1593,24 @@
 					content += '		<div class="tab-pane active" id="advance_query_condition_'+dtGridReflectionObj.option.id+'">';
 					content += '			<div class="panel panel-default">';
 					content += '				<div class="form-horizontal text-right advance-query-buttons">';
-					content += '					<button id="insertConditionTr_'+dtGridReflectionObj.option.id+'" title="'+$.fn.DtGrid.lang.advanceQuery.condition.buttons.insertTitle+'" class="btn btn-xs btn-primary">';
-					content += '						'+$.fn.DtGrid.lang.advanceQuery.condition.buttons.insert;
+					content += '					<button id="insertConditionTr_'+dtGridReflectionObj.option.id+'" title="'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang].advanceQuery.condition.buttons.insertTitle+'" class="btn btn-xs btn-primary">';
+					content += '						'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang].advanceQuery.condition.buttons.insert;
 					content += '					</button>';
-					content += '					<button id="clearConditionTr_'+dtGridReflectionObj.option.id+'" title="'+$.fn.DtGrid.lang.advanceQuery.condition.buttons.clearTitle+'" class="btn btn-xs btn-danger">';
-					content += '						'+$.fn.DtGrid.lang.advanceQuery.condition.buttons.clear;
+					content += '					<button id="clearConditionTr_'+dtGridReflectionObj.option.id+'" title="'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang].advanceQuery.condition.buttons.clearTitle+'" class="btn btn-xs btn-danger">';
+					content += '						'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang].advanceQuery.condition.buttons.clear;
 					content += '					</button>';
 					content += '				</div>';
 					content += '				<div class="advance-query-table-container">';
 					content += '					<table id="conditionTable_'+dtGridReflectionObj.option.id+'" class="table table-bordered table-striped table-hover table-condition table-center" style="width:860px;">';
 					content += '						<tr>';
-					content += '							<th style="width:50px;">'+$.fn.DtGrid.lang.advanceQuery.condition.table.sequence+'</th>';
-					content += '							<th style="width:100px;">'+$.fn.DtGrid.lang.advanceQuery.condition.table.operation+'</th>';
-					content += '							<th style="width:80px;">'+$.fn.DtGrid.lang.advanceQuery.condition.table.leftParentheses+'</th>';
-					content += '							<th style="width:140px;">'+$.fn.DtGrid.lang.advanceQuery.condition.table.field+'</th>';
-					content += '							<th style="width:120px;">'+$.fn.DtGrid.lang.advanceQuery.condition.table.condition+'</th>';
-					content += '							<th>'+$.fn.DtGrid.lang.advanceQuery.condition.table.value+'</th>';
-					content += '							<th style="width:80px;">'+$.fn.DtGrid.lang.advanceQuery.condition.table.rightParentheses+'</th>';
-					content += '							<th style="width:90px;">'+$.fn.DtGrid.lang.advanceQuery.condition.table.logic+'</th>';
+					content += '							<th style="width:50px;">'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang].advanceQuery.condition.table.sequence+'</th>';
+					content += '							<th style="width:100px;">'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang].advanceQuery.condition.table.operation+'</th>';
+					content += '							<th style="width:80px;">'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang].advanceQuery.condition.table.leftParentheses+'</th>';
+					content += '							<th style="width:140px;">'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang].advanceQuery.condition.table.field+'</th>';
+					content += '							<th style="width:120px;">'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang].advanceQuery.condition.table.condition+'</th>';
+					content += '							<th>'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang].advanceQuery.condition.table.value+'</th>';
+					content += '							<th style="width:80px;">'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang].advanceQuery.condition.table.rightParentheses+'</th>';
+					content += '							<th style="width:90px;">'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang].advanceQuery.condition.table.logic+'</th>';
 					content += '						</tr>';
 					content += '					</table>';
 					content += '				</div>';
@@ -1244,20 +1620,20 @@
 					content += '		<div class="tab-pane" id="advance_query_sort_'+dtGridReflectionObj.option.id+'">';
 					content += '			<div class="panel panel-default">';
 					content += '				<div class="form-horizontal text-right advance-query-buttons">';
-					content += '					<button id="insertSortTr_'+dtGridReflectionObj.option.id+'" title="'+$.fn.DtGrid.lang.advanceQuery.sort.buttons.insertTitle+'" class="btn btn-xs btn-primary">';
-					content += '						'+$.fn.DtGrid.lang.advanceQuery.sort.buttons.insert;
+					content += '					<button id="insertSortTr_'+dtGridReflectionObj.option.id+'" title="'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang].advanceQuery.sort.buttons.insertTitle+'" class="btn btn-xs btn-primary">';
+					content += '						'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang].advanceQuery.sort.buttons.insert;
 					content += '					</button>';
-					content += '					<button id="clearSortTr_'+dtGridReflectionObj.option.id+'" title="'+$.fn.DtGrid.lang.advanceQuery.sort.buttons.clearTitle+'" class="btn btn-xs btn-danger">';
-					content += '						'+$.fn.DtGrid.lang.advanceQuery.sort.buttons.clear;
+					content += '					<button id="clearSortTr_'+dtGridReflectionObj.option.id+'" title="'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang].advanceQuery.sort.buttons.clearTitle+'" class="btn btn-xs btn-danger">';
+					content += '						'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang].advanceQuery.sort.buttons.clear;
 					content += '					</button>';
 					content += '				</div>';
 					content += '				<div class="advance-query-table-container">';
 					content += '					<table id="sortTable_'+dtGridReflectionObj.option.id+'" class="table table-bordered table-striped table-hover table-condition table-center">';
 					content += '						<tr>';
-					content += '							<th>'+$.fn.DtGrid.lang.advanceQuery.sort.table.sequence+'</th>';
-					content += '							<th>'+$.fn.DtGrid.lang.advanceQuery.sort.table.operation+'</th>';
-					content += '							<th>'+$.fn.DtGrid.lang.advanceQuery.sort.table.field+'</th>';
-					content += '							<th>'+$.fn.DtGrid.lang.advanceQuery.sort.table.logic+'</th>';
+					content += '							<th>'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang].advanceQuery.sort.table.sequence+'</th>';
+					content += '							<th>'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang].advanceQuery.sort.table.operation+'</th>';
+					content += '							<th>'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang].advanceQuery.sort.table.field+'</th>';
+					content += '							<th>'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang].advanceQuery.sort.table.logic+'</th>';
 					content += '						</tr>';
 					content += '					</table>';
 					content += '				</div>';
@@ -1268,9 +1644,9 @@
 					content += '</div>';
 					var buttons = '';
 					buttons += '<button type="button" class="btn btn-primary" id="doAdvanceQuery_'+dtGridReflectionObj.option.id+'">';
-					buttons += '	'+$.fn.DtGrid.lang.advanceQuery.buttons.query;
+					buttons += '	'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang].advanceQuery.buttons.query;
 					buttons += '</button>';
-					content += $.fn.DtGrid.tools.getWindowEnd(buttons);
+					content += $.fn.DtGrid.tools.getWindowEnd($.fn.DtGrid.lang[dtGridReflectionObj.option.lang].buttons.close, buttons);
 					$('body').append(content);
 //					//新增高级查询方案
 //					$('#insertConditionTr_'+dtGridReflectionObj.option.id).click(function(){
@@ -1327,12 +1703,12 @@
 						var rightParentheses = $('#conditionTable_'+dtGridReflectionObj.option.id+' #rightParentheses_'+dtGridReflectionObj.option.id+'_'+id).val();
 						var logic = $('#conditionTable_'+dtGridReflectionObj.option.id+' #logic_'+dtGridReflectionObj.option.id+'_'+id).val();
 						if(field==''){
-							$.fn.DtGrid.tools.toast($.fn.DtGrid.tools.replaceAll($.fn.DtGrid.lang.advanceQuery.condition.errors.fieldMustSelect, '{sequence}', seq), 'warning', 3000);
+							$.fn.DtGrid.tools.toast($.fn.DtGrid.tools.replaceAll($.fn.DtGrid.lang[dtGridReflectionObj.option.lang].advanceQuery.condition.errors.fieldMustSelect, '{sequence}', seq), 'warning', 3000);
 							pass = false;
 							return false;
 						}
 						if(condition==''){
-							$.fn.DtGrid.tools.toast($.fn.DtGrid.tools.replaceAll($.fn.DtGrid.lang.advanceQuery.condition.errors.conditionMustSelect, '{sequence}', seq), 'warning', 3000);
+							$.fn.DtGrid.tools.toast($.fn.DtGrid.tools.replaceAll($.fn.DtGrid.lang[dtGridReflectionObj.option.lang].advanceQuery.condition.errors.conditionMustSelect, '{sequence}', seq), 'warning', 3000);
 							pass = false;
 							return false;
 						}
@@ -1355,12 +1731,12 @@
 						var sortField = $('#sortTable_'+dtGridReflectionObj.option.id+' #sortField_'+dtGridReflectionObj.option.id+'_'+id).val();
 						var sortLogic = $('#sortTable_'+dtGridReflectionObj.option.id+' #sortLogic_'+dtGridReflectionObj.option.id+'_'+id).val();
 						if(sortField==''){
-							$.fn.DtGrid.tools.toast($.fn.DtGrid.tools.replaceAll($.fn.DtGrid.lang.advanceQuery.sort.errors.fieldMustSelect, '{sequence}', seq), 'warning', 3000);
+							$.fn.DtGrid.tools.toast($.fn.DtGrid.tools.replaceAll($.fn.DtGrid.lang[dtGridReflectionObj.option.lang].advanceQuery.sort.errors.fieldMustSelect, '{sequence}', seq), 'warning', 3000);
 							pass = false;
 							return false;
 						}
 						if(sortLogic==''){
-							$.fn.DtGrid.tools.toast($.fn.DtGrid.tools.replaceAll($.fn.DtGrid.lang.advanceQuery.sort.errors.logicMustSelect, '{sequence}', seq), 'warning', 3000);
+							$.fn.DtGrid.tools.toast($.fn.DtGrid.tools.replaceAll($.fn.DtGrid.lang[dtGridReflectionObj.option.lang].advanceQuery.sort.errors.logicMustSelect, '{sequence}', seq), 'warning', 3000);
 							pass = false;
 							return false;
 						}
@@ -1481,7 +1857,7 @@
 									returnDatas.push(record);
 								}
 							}catch(e){
-								$.fn.DtGrid.tools.toast($.fn.DtGrid.lang.advanceQuery.condition.errors.conditionError, 'error', 3000);
+								$.fn.DtGrid.tools.toast($.fn.DtGrid.lang[dtGridReflectionObj.option.lang].advanceQuery.condition.errors.conditionError, 'error', 3000);
 								return originalDatas;
 							}
 						}else{
@@ -1543,9 +1919,9 @@
 					content += '<tr id="tr_'+dtGridReflectionObj.option.id+'_'+dtGridReflectionObj.sequenceCondition+'">';
 					content += '	<td id="seqTd_'+dtGridReflectionObj.option.id+'_'+dtGridReflectionObj.sequenceCondition+'"></td>';
 					content += '	<td>';
-					content += '		<button type="button" id="moveUpConditionTr_'+dtGridReflectionObj.option.id+'_'+dtGridReflectionObj.sequenceCondition+'" class="btn btn-primary btn-xs" title="'+$.fn.DtGrid.lang.advanceQuery.condition.table.buttons.upTitle+'">'+$.fn.DtGrid.lang.advanceQuery.condition.table.buttons.up+'</button>';
-					content += '		<button type="button" id="moveDownConditionTr_'+dtGridReflectionObj.option.id+'_'+dtGridReflectionObj.sequenceCondition+'" class="btn btn-primary btn-xs" title="'+$.fn.DtGrid.lang.advanceQuery.condition.table.buttons.downTitle+'">'+$.fn.DtGrid.lang.advanceQuery.condition.table.buttons.down+'</button>';
-					content += '		<button type="button" id="deleteConditionTr_'+dtGridReflectionObj.option.id+'_'+dtGridReflectionObj.sequenceCondition+'" class="btn btn-danger btn-xs" title="'+$.fn.DtGrid.lang.advanceQuery.condition.table.buttons.deleteTitle+'">'+$.fn.DtGrid.lang.advanceQuery.condition.table.buttons['delete']+'</button>';
+					content += '		<button type="button" id="moveUpConditionTr_'+dtGridReflectionObj.option.id+'_'+dtGridReflectionObj.sequenceCondition+'" class="btn btn-primary btn-xs" title="'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang].advanceQuery.condition.table.buttons.upTitle+'">'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang].advanceQuery.condition.table.buttons.up+'</button>';
+					content += '		<button type="button" id="moveDownConditionTr_'+dtGridReflectionObj.option.id+'_'+dtGridReflectionObj.sequenceCondition+'" class="btn btn-primary btn-xs" title="'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang].advanceQuery.condition.table.buttons.downTitle+'">'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang].advanceQuery.condition.table.buttons.down+'</button>';
+					content += '		<button type="button" id="deleteConditionTr_'+dtGridReflectionObj.option.id+'_'+dtGridReflectionObj.sequenceCondition+'" class="btn btn-danger btn-xs" title="'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang].advanceQuery.condition.table.buttons.deleteTitle+'">'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang].advanceQuery.condition.table.buttons['delete']+'</button>';
 					content += '	</td>';
 					content += '	<td>';
 					content += '		<input type="text" id="leftParentheses_'+dtGridReflectionObj.option.id+'_'+dtGridReflectionObj.sequenceCondition+'" name="leftParentheses_'+dtGridReflectionObj.option.id+'_'+dtGridReflectionObj.sequenceCondition+'" class="form-control" />';
@@ -1762,9 +2138,9 @@
 					content += '<tr id="tr_'+dtGridReflectionObj.option.id+'_'+dtGridReflectionObj.sequenceSort+'">';
 					content += '	<td id="seqTd_'+dtGridReflectionObj.option.id+'_'+dtGridReflectionObj.sequenceSort+'"></td>';
 					content += '	<td>';
-					content += '		<button type="button" id="moveUpSortTr_'+dtGridReflectionObj.option.id+'_'+dtGridReflectionObj.sequenceSort+'" class="btn btn-primary btn-xs" title="'+$.fn.DtGrid.lang.advanceQuery.sort.table.buttons.upTitle+'">'+$.fn.DtGrid.lang.advanceQuery.sort.table.buttons.up+'</button>';
-					content += '		<button type="button" id="moveDownSortTr_'+dtGridReflectionObj.option.id+'_'+dtGridReflectionObj.sequenceSort+'" class="btn btn-primary btn-xs" title="'+$.fn.DtGrid.lang.advanceQuery.sort.table.buttons.downTitle+'">'+$.fn.DtGrid.lang.advanceQuery.sort.table.buttons.down+'</button>';
-					content += '		<button type="button" id="deleteSortTr_'+dtGridReflectionObj.option.id+'_'+dtGridReflectionObj.sequenceSort+'" class="btn btn-danger btn-xs" title="'+$.fn.DtGrid.lang.advanceQuery.sort.table.buttons.deleteTitle+'">'+$.fn.DtGrid.lang.advanceQuery.sort.table.buttons['delete']+'</button>';
+					content += '		<button type="button" id="moveUpSortTr_'+dtGridReflectionObj.option.id+'_'+dtGridReflectionObj.sequenceSort+'" class="btn btn-primary btn-xs" title="'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang].advanceQuery.sort.table.buttons.upTitle+'">'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang].advanceQuery.sort.table.buttons.up+'</button>';
+					content += '		<button type="button" id="moveDownSortTr_'+dtGridReflectionObj.option.id+'_'+dtGridReflectionObj.sequenceSort+'" class="btn btn-primary btn-xs" title="'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang].advanceQuery.sort.table.buttons.downTitle+'">'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang].advanceQuery.sort.table.buttons.down+'</button>';
+					content += '		<button type="button" id="deleteSortTr_'+dtGridReflectionObj.option.id+'_'+dtGridReflectionObj.sequenceSort+'" class="btn btn-danger btn-xs" title="'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang].advanceQuery.sort.table.buttons.deleteTitle+'">'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang].advanceQuery.sort.table.buttons['delete']+'</button>';
 					content += '	</td>';
 					content += '	<td>';
 					content += '		<select id="sortField_'+dtGridReflectionObj.option.id+'_'+dtGridReflectionObj.sequenceSort+'" name="sortField_'+dtGridReflectionObj.option.id+'_'+dtGridReflectionObj.sequenceSort+'" class="form-control">';
@@ -1780,8 +2156,8 @@
 					content += '	<td>';
 					content += '		<select id="sortLogic_'+dtGridReflectionObj.option.id+'_'+dtGridReflectionObj.sequenceSort+'" name="sortLogic_'+dtGridReflectionObj.option.id+'_'+dtGridReflectionObj.sequenceSort+'" class="form-control">';
 					content += '			<option value=""></option>';
-					content += '			<option value="0">'+$.fn.DtGrid.lang.advanceQuery.sort.logic.asc+'</option>';
-					content += '			<option value="1">'+$.fn.DtGrid.lang.advanceQuery.sort.logic.desc+'</option>';
+					content += '			<option value="0">'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang].advanceQuery.sort.logic.asc+'</option>';
+					content += '			<option value="1">'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang].advanceQuery.sort.logic.desc+'</option>';
 					content += '		</select>';
 					content += '	</td>';
 					content += '</tr>';
@@ -1856,13 +2232,13 @@
 					}
 					//放置新的打印选项
 					var content = '';
-					content += $.fn.DtGrid.tools.getWindowStart('dtGridPrint_'+dtGridReflectionObj.option.id, $.fn.DtGrid.lang.print.title);
+					content += $.fn.DtGrid.tools.getWindowStart('dtGridPrint_'+dtGridReflectionObj.option.id, $.fn.DtGrid.lang[dtGridReflectionObj.option.lang].print.title);
 					content += '				<table class="table table-bordered table-print">';
 					content += '					<thead>';
 					content += '						<tr>';
 					content += '							<th><input type="checkbox" id="dt_grid_print_check_'+dtGridReflectionObj.option.id+'" checked="checked" /></th>';
-					content += '							<th>'+$.fn.DtGrid.lang.print.table.column+'</th>';
-					content += '							<th>'+$.fn.DtGrid.lang.print.table.operation+'</th>';
+					content += '							<th>'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang].print.table.column+'</th>';
+					content += '							<th>'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang].print.table.operation+'</th>';
 					content += '						</tr>';
 					content += '					</thead>';
 					content += '					<tbody>';
@@ -1877,8 +2253,8 @@
 						content += '						<td><input type="checkbox" id="dt_grid_print_check_'+dtGridReflectionObj.option.id+'_'+i+'" checked="checked" value="'+i+'" /></td>';
 						content += '						<td>'+column.title+'</td>';
 						content += '						<td>';
-						content += '							<button type="button" class="btn btn-primary btn-xs" dataId="'+i+'" id="dt_grid_print_up_'+dtGridReflectionObj.option.id+'_'+i+'" title="'+$.fn.DtGrid.lang.print.table.buttons.upTitle+'">'+$.fn.DtGrid.lang.print.table.buttons.up+'</button>';
-						content += '							<button type="button" class="btn btn-primary btn-xs" dataId="'+i+'" id="dt_grid_print_down_'+dtGridReflectionObj.option.id+'_'+i+'" title="'+$.fn.DtGrid.lang.print.table.buttons.downTitle+'">'+$.fn.DtGrid.lang.print.table.buttons.down+'</button>';
+						content += '							<button type="button" class="btn btn-primary btn-xs" dataId="'+i+'" id="dt_grid_print_up_'+dtGridReflectionObj.option.id+'_'+i+'" title="'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang].print.table.buttons.upTitle+'">'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang].print.table.buttons.up+'</button>';
+						content += '							<button type="button" class="btn btn-primary btn-xs" dataId="'+i+'" id="dt_grid_print_down_'+dtGridReflectionObj.option.id+'_'+i+'" title="'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang].print.table.buttons.downTitle+'">'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang].print.table.buttons.down+'</button>';
 						content += '						</td>';
 						content += '					</tr>';
 					}
@@ -1886,9 +2262,9 @@
 					content += '				</table>';
 					var buttons = '';
 					buttons += '<button type="button" class="btn btn-primary" id="dt_grid_print_execute_'+dtGridReflectionObj.option.id+'">';
-					buttons += '	'+$.fn.DtGrid.lang.print.buttons.print;
+					buttons += '	'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang].print.buttons.print;
 					buttons += '</button>';
-					content += $.fn.DtGrid.tools.getWindowEnd(buttons);
+					content += $.fn.DtGrid.tools.getWindowEnd($.fn.DtGrid.lang[dtGridReflectionObj.option.lang].buttons.close, buttons);
 					$('body').append(content);
 					//绑定复选全选反选方法
 					$('#dt_grid_print_check_'+dtGridReflectionObj.option.id).click(function(){
@@ -1930,7 +2306,7 @@
 									var columnNo = this.value;
 									content += '	<td class="'+dtGridReflectionObj.option.columns[columnNo].columnClass+'" style="'+dtGridReflectionObj.option.columns[columnNo].columnStyle+'">';
 									if(dtGridReflectionObj.option.columns[columnNo].resolution){
-										content += dtGridReflectionObj.option.columns[columnNo].resolution(dtGridReflectionObj.exhibitDatas[i], dtGridReflectionObj.exhibitDatas[i][dtGridReflectionObj.option.columns[columnNo].id]);
+										content += dtGridReflectionObj.option.columns[columnNo].resolution(dtGridReflectionObj.exhibitDatas[i][dtGridReflectionObj.option.columns[columnNo].id], dtGridReflectionObj.exhibitDatas[i], dtGridReflectionObj.option.columns[columnNo], dtGridReflectionObj, i, columnNo);
 									}else{
 										content += dtGridReflectionObj.formatContent(dtGridReflectionObj.option.columns[columnNo], dtGridReflectionObj.exhibitDatas[i][dtGridReflectionObj.option.columns[columnNo].id]);
 									}
@@ -1942,12 +2318,14 @@
 						content += '	</tbody>';
 						content += '</table>';
 						//隐藏body，放置打印对象
+						var scrollTop = $('body').scrollTop();
 						$('body').hide();
 						$('html').append(content);
 						window.print();
 						$('#dt_grid_print_'+dtGridReflectionObj.option.id).remove();
 						$('body').show();
 						$('#dtGridPrint_'+dtGridReflectionObj.option.id+'Modal').modal('hide');
+						$('body').scrollTop(scrollTop);
 					});
 					//显示打印选项
 					$('#dtGridPrint_'+dtGridReflectionObj.option.id+'Modal').modal('show');
@@ -1969,14 +2347,14 @@
 					}
 					//放置新的导出选项
 					var content = '';
-					content += $.fn.DtGrid.tools.getWindowStart('dtGridExport_'+exportType+'_'+dtGridReflectionObj.option.id, $.fn.DtGrid.lang['export'][exportType].title);
+					content += $.fn.DtGrid.tools.getWindowStart('dtGridExport_'+exportType+'_'+dtGridReflectionObj.option.id, $.fn.DtGrid.lang[dtGridReflectionObj.option.lang]['export'][exportType].title);
 					content += '				<div class="form-export modal-body form-horizontal form-export">';
 					content += '					<div class="form-group">';
-					content += '						<label class="col-sm-3 control-label">'+$.fn.DtGrid.lang['export'][exportType].exportType.title+'</label>';
+					content += '						<label class="col-sm-3 control-label">'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang]['export'][exportType].exportType.title+'</label>';
 					content += '						<div class="col-sm-9">';
 					content += '							<div class="checkbox">';
-					content += '								<label><input type="radio" name="dt_grid_export_export_all_data_'+exportType+'_'+dtGridReflectionObj.option.id+'" value="0" checked="checked" /> '+$.fn.DtGrid.lang['export'][exportType].exportType.now+'</label>';
-					content += '								<label><input type="radio" name="dt_grid_export_export_all_data_'+exportType+'_'+dtGridReflectionObj.option.id+'" value="1" /> '+$.fn.DtGrid.lang['export'][exportType].exportType.all+'</label>';
+					content += '								<label><input type="radio" name="dt_grid_export_export_all_data_'+exportType+'_'+dtGridReflectionObj.option.id+'" value="0" checked="checked" /> '+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang]['export'][exportType].exportType.now+'</label>';
+					content += '								<label><input type="radio" name="dt_grid_export_export_all_data_'+exportType+'_'+dtGridReflectionObj.option.id+'" value="1" /> '+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang]['export'][exportType].exportType.all+'</label>';
 					content += '							</div>';
 					content += '						</div>';
 					content += '					</div>';
@@ -1985,8 +2363,8 @@
 					content += '					<thead>';
 					content += '						<tr>';
 					content += '							<th><input type="checkbox" id="dt_grid_export_check_'+exportType+'_'+dtGridReflectionObj.option.id+'" checked="checked" /></th>';
-					content += '							<th>'+$.fn.DtGrid.lang['export'][exportType].table.column+'</th>';
-					content += '							<th>'+$.fn.DtGrid.lang['export'][exportType].table.operation+'</th>';
+					content += '							<th>'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang]['export'][exportType].table.column+'</th>';
+					content += '							<th>'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang]['export'][exportType].table.operation+'</th>';
 					content += '						</tr>';
 					content += '					</thead>';
 					content += '					<tbody>';
@@ -2000,8 +2378,8 @@
 						content += '						<td><input type="checkbox" id="dt_grid_export_check_'+exportType+'_'+dtGridReflectionObj.option.id+'_'+i+'" checked="checked" value="'+i+'" /></td>';
 						content += '						<td>'+column.title+'</td>';
 						content += '						<td>';
-						content += '							<button type="button" class="btn btn-primary btn-xs" dataId="'+i+'" id="dt_grid_export_up_'+exportType+'_'+dtGridReflectionObj.option.id+'_'+i+'" title="'+$.fn.DtGrid.lang['export'][exportType].table.buttons.upTitle+'">'+$.fn.DtGrid.lang['export'][exportType].table.buttons.up+'</button>';
-						content += '							<button type="button" class="btn btn-primary btn-xs" dataId="'+i+'" id="dt_grid_export_down_'+exportType+'_'+dtGridReflectionObj.option.id+'_'+i+'" title="'+$.fn.DtGrid.lang['export'][exportType].table.buttons.downTitle+'">'+$.fn.DtGrid.lang['export'][exportType].table.buttons.down+'</button>';
+						content += '							<button type="button" class="btn btn-primary btn-xs" dataId="'+i+'" id="dt_grid_export_up_'+exportType+'_'+dtGridReflectionObj.option.id+'_'+i+'" title="'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang]['export'][exportType].table.buttons.upTitle+'">'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang]['export'][exportType].table.buttons.up+'</button>';
+						content += '							<button type="button" class="btn btn-primary btn-xs" dataId="'+i+'" id="dt_grid_export_down_'+exportType+'_'+dtGridReflectionObj.option.id+'_'+i+'" title="'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang]['export'][exportType].table.buttons.downTitle+'">'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang]['export'][exportType].table.buttons.down+'</button>';
 						content += '						</td>';
 						content += '					</tr>';
 					}
@@ -2009,9 +2387,9 @@
 					content += '				</table>';
 					var buttons = '';
 					buttons += '<button type="button" class="btn btn-primary" id="dt_grid_export_execute_'+exportType+'_'+dtGridReflectionObj.option.id+'">';
-					buttons += '	'+$.fn.DtGrid.lang['export'][exportType].buttons['export'];
+					buttons += '	'+$.fn.DtGrid.lang[dtGridReflectionObj.option.lang]['export'][exportType].buttons['export'];
 					buttons += '</button>';
-					content += $.fn.DtGrid.tools.getWindowEnd(buttons);
+					content += $.fn.DtGrid.tools.getWindowEnd($.fn.DtGrid.lang[dtGridReflectionObj.option.lang].buttons.close, buttons);
 					$('body').append(content);
 					//绑定复选方法
 					$('#dt_grid_export_check_'+exportType+'_'+dtGridReflectionObj.option.id).click(function(){
@@ -2050,7 +2428,6 @@
 							exportForm.action = dtGridReflectionObj.option.loadURL;
 						}
 						var dtGridPager = new Object();
-						dtGridPager.pageSize = dtGridReflectionObj.pager.pageSize;
 						dtGridPager.pageSize = dtGridReflectionObj.pager.pageSize;
 						dtGridPager.startRecord = dtGridReflectionObj.pager.startRecord;
 						dtGridPager.nowPage = dtGridReflectionObj.pager.nowPage;
@@ -2167,16 +2544,6 @@
 			        return v.toString(16);
 				});
 			},
-			//注册事件方法
-			addEvent : function(element, methodName, fn){
-				if(element.addEventListener){
-					element.addEventListener(methodName, fn);
-				}else if(element.attachEvent){
-					element.attachEvent('on'+methodName, fn);
-				}else{
-					element['on'+methodName] = fn;
-				}
-			},
 			//创建一个模态窗口（开始）
 			getWindowStart : function(id, title){
 				var content = '';
@@ -2190,11 +2557,11 @@
 				return content;
 			},
 			//创建一个模态窗口（结束）
-			getWindowEnd : function(buttons){
+			getWindowEnd : function(closeButtonTitle, buttons){
 				var content = '';
 				content += '			<div class="modal-footer">';
 				content += '				<button type="button" class="btn btn-default" data-dismiss="modal">';
-				content += '					'+$.fn.DtGrid.lang.buttons.close;
+				content += '					'+closeButtonTitle;
 				content += '				</button>';
 				content += '				'+buttons;
 				content += '			</div>';
@@ -2413,6 +2780,7 @@
 (function($) {
 	$.fn.DtGrid.defaultOptions = {
 		grid : {
+			lang : 'en',
 			ajaxLoad : true,
 			loadAll : false,
 			loadURL : '',
@@ -2427,7 +2795,8 @@
 			tools : 'refresh|faseQuery|advanceQuery|export[excel,csv,pdf,txt]|print',
 			exportFileName : 'datas',
 			exportURL : '/dtgrid/export',
-			pageSize : 20
+			pageSize : 20,
+			pageSizeLimit : [20, 50, 100]
 		},
 		column : {
 			id : 'field',

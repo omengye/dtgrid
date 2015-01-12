@@ -6,7 +6,10 @@
  */
 
 (function($) {
-	$.fn.DtGrid.lang = {
+	if(!$.fn.DtGrid.lang){
+		$.fn.DtGrid.lang = {};
+	}
+	$.fn.DtGrid.lang['en'] = {
 		errors : {
 			ajaxLoadError : 'Data failed to load, please check your condition options is had some errors.'
 		},
@@ -53,7 +56,11 @@
 			alreadyFirstPage : 'Already First Page',
 			alreadyLastPage : 'Already Last Page',
 			nowPage : '{nowPage}',
-			nowPageTitle : 'Page {nowPage}'
+			nowPageTitle : 'Page {nowPage}',
+			errors : {
+				notANumber : 'Your input is not a number',
+				maxPageSize : 'The page does not allow more than {pageSizeLimit}, has been restored to original setting'
+			}
 		},
 		fastQuery : {
 			title : '<i class="fa fa-search"></i>&nbsp;&nbsp;Fast Query',

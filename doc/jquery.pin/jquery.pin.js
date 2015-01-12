@@ -76,6 +76,7 @@
                         top: data.pad.top
                     }).css("position", "fixed");
                     if (options.activeClass) { $this.addClass(options.activeClass); }
+                    if (options.pinCallback) { options.pinCallback(); }
                 } else if (scrollY >= to) {
                     $this.css({
                         left: "",
@@ -85,6 +86,7 @@
                 } else {
                     $this.css({position: "", top: "", left: ""});
                     if (options.activeClass) { $this.removeClass(options.activeClass); }
+                    if (options.unpinCallback) { options.unpinCallback(); }
                 }
           }
           elements = elmts;

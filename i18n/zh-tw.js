@@ -6,7 +6,10 @@
  */
 
 (function($) {
-	$.fn.DtGrid.lang = {
+	if(!$.fn.DtGrid.lang){
+		$.fn.DtGrid.lang = {};
+	}
+	$.fn.DtGrid.lang['zh-tw'] = {
 		errors : {
 			ajaxLoadError : '資料載入失敗，請檢查您的條件配置是否存在錯誤。'
 		},
@@ -53,7 +56,11 @@
 			alreadyFirstPage : '已經是第一頁了',
 			alreadyLastPage : '已經是最後一頁了',
 			nowPage : '{nowPage}',
-			nowPageTitle : '第 {nowPage} 頁'
+			nowPageTitle : '第 {nowPage} 頁',
+			errors : {
+				notANumber : '您輸入的內容不是數位',
+				maxPageSize : '每頁顯示數量不得超過 {pageSizeLimit} 條，已還原為原設置'
+			}
 		},
 		fastQuery : {
 			title : '<i class="fa fa-search"></i>&nbsp;&nbsp;快速查詢',
