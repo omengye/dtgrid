@@ -43,7 +43,7 @@
 					//快速查询窗体是否初始化
 					fastQueryWindowIsInit : false,
 					//高级查询窗体是否初始化
-					advanceQueryWindowIsInit : false,
+					advanceQueryWindowIsInit : false
 				},
 				//页面参数对象
 				pager : {
