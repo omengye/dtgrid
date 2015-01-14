@@ -3,6 +3,8 @@ DT Grid
 DESTINY Grid（DT Grid）是一款由大连首闻科技有限公司自主研发的基于MIT开源协议的响应式表格控件。<br />
 A responsive grid by DaLian ShouWen Technology co., based on MIT open source licenses.<br />
 
+![DT Grid](http://www.dtgrid.com/dtGrid/doc/images/responsive.png "DT Grid")
+
 DT Grid : [http://www.dtgrid.com](http://www.dtgrid.com)<br />
 GitHub : [https://github.com/dlshouwen/dtgrid](https://github.com/dlshouwen/dtgrid)<br />
 Git@OSC : [http://git.oschina.net/dlshouwen/dtgrid](http://git.oschina.net/dlshouwen/dtgrid)<br />
