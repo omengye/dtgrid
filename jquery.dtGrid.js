@@ -2519,7 +2519,37 @@
 					//定义表格对象映像
 					var dtGridReflectionObj = this;
 					if(allReload){
+						//dtGridReflectionObj.load();
+						// 重写refresh刷新方法
 						dtGridReflectionObj.load();
+						$.ajax({
+							type:'post',
+							url:dtGridOption.loadURL,
+							data:null,
+							contentType: "application/x-www-form-urlencoded; charset=utf-8",
+							beforeSend: function(xhr) {xhr.setRequestHeader("__REQUEST_TYPE", "AJAX_REQUEST");},
+							success:function(datas){
+								debugger;
+								//处理原始数据集
+								dtGridReflectionObj.originalDatas = $.parseJSON(datas);
+								dtGridReflectionObj.originalDatas = dtGridReflectionObj.originalDatas?dtGridReflectionObj.originalDatas:new Array();
+								//处理基础数据集
+								dtGridReflectionObj.baseDatas = dtGridReflectionObj.originalDatas.slice(0, dtGridReflectionObj.originalDatas.length);
+								//处理分页属性
+								dtGridReflectionObj.pager.recordCount = dtGridReflectionObj.baseDatas.length;
+								dtGridReflectionObj.pager.pageCount = Math.floor((dtGridReflectionObj.pager.recordCount-1)/dtGridReflectionObj.pager.pageSize)+1;
+								//获取展现数据集
+								dtGridReflectionObj.exhibitDatas = dtGridReflectionObj.baseDatas.slice(dtGridReflectionObj.pager.startRecord, dtGridReflectionObj.pager.startRecord+dtGridReflectionObj.pager.pageSize);
+								//获取排序数据集备份
+								dtGridReflectionObj.sortOriginalDatas = dtGridReflectionObj.exhibitDatas.slice(0, dtGridReflectionObj.exhibitDatas.length);
+								//构建表格、工具条
+								dtGridReflectionObj.constructGrid();
+								dtGridReflectionObj.constructGridPageBar();
+							},
+							error:function(XMLHttpRequest, textStatus, errorThrown){
+
+							}
+						});
 					}else{
 						//重新加载数据
 						dtGridReflectionObj.constructGrid();
